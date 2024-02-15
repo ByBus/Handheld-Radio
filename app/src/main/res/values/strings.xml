@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ArduinoBluetoothCommander</string>
+    <string name="default_device_name">Unnamed</string>
+</resources>
