@@ -1,5 +1,8 @@
 package host.capitalquiz.arduinobluetoothcommander.presentation
 
-import host.capitalquiz.arduinobluetoothcommander.domain.Device
+import host.capitalquiz.arduinobluetoothcommander.presentation.ui.DeviceUi
 
-data class BluetoothUiState(val pairedDevices: List<Device> = emptyList(), val scannedDevices: List<Device> = emptyList())
+data class BluetoothUiState(
+    val pairedDevices: List<DeviceUi> = emptyList(),
+    val scannedDevices: List<DeviceUi> = emptyList(),
+)

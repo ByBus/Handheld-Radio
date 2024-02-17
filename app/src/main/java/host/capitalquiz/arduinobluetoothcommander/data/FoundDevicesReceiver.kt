@@ -19,12 +19,13 @@ class FoundDevicesReceiver@Inject constructor(@ApplicationContext private val co
     DevicesClosableDataSource {
     private val _foundDevices = MutableStateFlow<List<Device>>(emptyList())
     override val foundDevices = _foundDevices.asStateFlow()
+    private var isRegistered = false
 
     override fun onReceive(context: Context, intent: Intent) {
         val device = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(BluetoothDevice.EXTRA_NAME, BluetoothDevice::class.java)
+            intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
         } else {
-            intent.getParcelableExtra(BluetoothDevice.EXTRA_NAME)
+            intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
         }
         device?.let {
             _foundDevices.update { old ->
@@ -35,10 +36,14 @@ class FoundDevicesReceiver@Inject constructor(@ApplicationContext private val co
     }
 
     override fun init() {
+        isRegistered = true
         context.registerReceiver(this, IntentFilter(BluetoothDevice.ACTION_FOUND))
     }
 
     override fun close() {
-        context.unregisterReceiver(this)
+        if (isRegistered) {
+            context.unregisterReceiver(this)
+            isRegistered = false
+        }
     }
 }
