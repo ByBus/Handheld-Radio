@@ -21,12 +21,12 @@ class DevicesCommunication @Inject constructor(
         merge(server.connectionState, client.connectionState, _connectionState)
 
     override suspend fun startServer(serverName: String) {
-        _connectionState.tryEmit(ConnectionResult.Connecting)
+        _connectionState.tryEmit(ConnectionResult.Connecting())
         server.start(serverName, commonDeviceUUID)
     }
 
     override suspend fun connectToDevice(device: Device) {
-        _connectionState.tryEmit(ConnectionResult.Connecting)
+        _connectionState.tryEmit(ConnectionResult.Connecting())
         client.connect(device, commonDeviceUUID)
     }
 

@@ -42,7 +42,7 @@ class BluetoothServer @Inject constructor(
             )
             clientSocket = try {
                 adapter?.name = serverName
-                serverSocket?.accept()
+                serverSocket?.accept(30_000)
             } catch (e: IOException) {
                 _connectionResult.tryEmit(ConnectionResult.Error(e.message.toString()))
                 null
@@ -53,13 +53,15 @@ class BluetoothServer @Inject constructor(
                 serverSocket?.close()
                 val device = socket.remoteDevice.toDevice()
                 _connectionResult.tryEmit(ConnectionResult.Connect(device))
-            }
+            } ?: _connectionResult.tryEmit(ConnectionResult.Error("Timeout exceeded"))
         }
         connectionJob?.invokeOnCompletion { disconnect() }
     }
 
     override fun disconnect() {
-        connectionJob?.cancel()
+        connectionJob?.let { job ->
+            if (job.isCancelled.not()) job.cancel()
+        }
         try {
             serverSocket?.close()
             clientSocket?.close()
