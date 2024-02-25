@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.presentation
+package host.capitalquiz.arduinobluetoothcommander.presentation.contracts
 
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
