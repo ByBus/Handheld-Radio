@@ -18,12 +18,12 @@ class PairedDevicesDataSource @Inject constructor(
     private val adapter by lazy { bluetoothManager?.adapter }
 
     override fun init() {
+        adapter?.startDiscovery()
         refreshPaired()
-        bluetoothManager?.adapter?.startDiscovery()
     }
 
     override fun close() {
-        bluetoothManager?.adapter?.cancelDiscovery()
+        adapter?.cancelDiscovery()
     }
 
     private fun refreshPaired() {

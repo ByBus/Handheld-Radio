@@ -15,7 +15,9 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
-class FoundDevicesReceiver@Inject constructor(@ApplicationContext private val context: Context) : BroadcastReceiver(),
+class FoundDevicesReceiver @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : BroadcastReceiver(),
     DevicesClosableDataSource {
     private val _foundDevices = MutableStateFlow<List<Device>>(emptyList())
     override val foundDevices = _foundDevices.asStateFlow()
@@ -27,17 +29,19 @@ class FoundDevicesReceiver@Inject constructor(@ApplicationContext private val co
         } else {
             intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
         }
-        device?.let {
+        device?.let { bluetoothDevice ->
             _foundDevices.update { old ->
-                val new = Device(it.name, it.address)
-                if (new !in old) old else old + new
+                val new = bluetoothDevice.toDevice()
+                if (new in old) old else old + new
             }
         }
     }
 
     override fun init() {
-        isRegistered = true
-        context.registerReceiver(this, IntentFilter(BluetoothDevice.ACTION_FOUND))
+        if (isRegistered.not()) {
+            context.registerReceiver(this, IntentFilter(BluetoothDevice.ACTION_FOUND))
+            isRegistered = true
+        }
     }
 
     override fun close() {

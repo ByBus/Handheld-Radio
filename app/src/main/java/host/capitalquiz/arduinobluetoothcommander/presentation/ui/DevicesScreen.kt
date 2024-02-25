@@ -26,12 +26,14 @@ fun DevicesScreen(
     state: BluetoothUiState,
     onStartSearch: () -> Unit,
     onStopSearch: () -> Unit,
+    onStartServer: () -> Unit,
+    onDeviceClick: (DeviceUi) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         DevicesList(
             pairedDevices = state.pairedDevices,
             foundDevices = state.scannedDevices,
-            onClickDevice = {},
+            onClickDevice = onDeviceClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
@@ -45,6 +47,9 @@ fun DevicesScreen(
             }
             Button(onClick = onStopSearch) {
                 Text(text = stringResource(R.string.stop_scan))
+            }
+            Button(onClick = onStartServer) {
+                Text(text = stringResource(R.string.start_server))
             }
         }
     }
