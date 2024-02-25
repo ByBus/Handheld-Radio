@@ -8,9 +8,11 @@ data class BluetoothUiState(
     val scannedDevices: List<DeviceUi> = emptyList(),
     val isConnected: Boolean = false,
     val isConnecting: Boolean = false,
-    val errorMessage: String? = null,
+    private val errorMessage: String? = null,
 ) {
     operator fun plus(connectionResultUi: ConnectionResultUi): BluetoothUiState {
         return connectionResultUi.reduce(this)
     }
+
+    fun errorMessage(block: (String) -> Unit) = errorMessage?.let(block)
 }

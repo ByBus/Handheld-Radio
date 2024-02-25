@@ -1,14 +1,9 @@
 package host.capitalquiz.arduinobluetoothcommander.presentation
 
-import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
 import host.capitalquiz.arduinobluetoothcommander.R
+import host.capitalquiz.arduinobluetoothcommander.presentation.contracts.EnableBluetoothContract
+import host.capitalquiz.arduinobluetoothcommander.presentation.contracts.MakeDiscoverableOverBluetoothContract
+import host.capitalquiz.arduinobluetoothcommander.presentation.contracts.RequestAllBluetoothPermissionsContract
+import host.capitalquiz.arduinobluetoothcommander.presentation.contracts.launch
 import host.capitalquiz.arduinobluetoothcommander.presentation.ui.DevicesScreen
 import host.capitalquiz.arduinobluetoothcommander.ui.theme.ArduinoBluetoothCommanderTheme
 
@@ -41,40 +40,24 @@ class MainActivity : ComponentActivity() {
         ) {}
 
         val permissionLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissionsWithResult ->
-            val canEnableBT = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                permissionsWithResult[Manifest.permission.BLUETOOTH_CONNECT] == true
-            } else true
-
-            if (canEnableBT && viewModel.isBlueToothEnabled().not()) {
-                enableBluetoothLauncher.launch(null)
-            }
+            RequestAllBluetoothPermissionsContract()
+        ) { canEnableBT ->
+            if (canEnableBT) enableBluetoothLauncher.launch()
         }
 
-        permissionLauncher.launch(
-            arrayOf(
-                Manifest.permission.BLUETOOTH_SCAN,
-                Manifest.permission.BLUETOOTH_CONNECT,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        )
-
-        if (viewModel.isBlueToothEnabled().not()) {
-            enableBluetoothLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
-        }
+        permissionLauncher.launch()
 
         setContent {
             ArduinoBluetoothCommanderTheme {
                 val uiState by viewModel.state.collectAsState()
+                val messageEvent by viewModel.message.collectAsState()
 
-                LaunchedEffect(key1 = uiState.errorMessage) {
-                    uiState.errorMessage?.let { message ->
+                LaunchedEffect(key1 = messageEvent) {
+                    messageEvent.consume { message ->
                         Toast.makeText(
                             applicationContext,
                             message,
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
@@ -107,7 +90,9 @@ class MainActivity : ComponentActivity() {
                             onStartSearch = viewModel::startScanning,
                             onStopSearch = viewModel::stopScanning,
                             onStartServer = {
-                                makeDiscoverableOverBluetoothLauncher.launch(/* ms */300)
+                                makeDiscoverableOverBluetoothLauncher.launch(/* ms */
+                                    resources.getInteger(R.integer.bluetooth_visible_to_others_duration)
+                                )
                             },
                             onDeviceClick = viewModel::connectTo
                         )

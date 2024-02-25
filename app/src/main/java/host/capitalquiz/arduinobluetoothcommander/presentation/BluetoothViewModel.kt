@@ -3,16 +3,16 @@ package host.capitalquiz.arduinobluetoothcommander.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import host.capitalquiz.arduinobluetoothcommander.domain.BluetoothChecker
 import host.capitalquiz.arduinobluetoothcommander.domain.Communication
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.DeviceMapper
 import host.capitalquiz.arduinobluetoothcommander.domain.DevicesRepository
 import host.capitalquiz.arduinobluetoothcommander.presentation.ui.DeviceUi
 import host.capitalquiz.arduinobluetoothcommander.presentation.ui.toDomain
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,32 +20,30 @@ import javax.inject.Inject
 @HiltViewModel
 class BluetoothViewModel @Inject constructor(
     private val repository: DevicesRepository,
-    private val bluetoothStatus: BluetoothChecker,
     private val deviceUiMapper: DeviceMapper<DeviceUi>,
     private val connectionResultUiMapper: ConnectionResult.Mapper<ConnectionResultUi>,
     private val communication: Communication,
 ) : ViewModel() {
 
-    private val connectionState =
-        communication.connectionState.map { it.map(connectionResultUiMapper) }
+    private val _message = MutableStateFlow<MessageEvent>(MessageEvent.Empty)
+    val message = _message.asStateFlow()
+
     val state = combine(
         repository.pairedDevices,
         repository.scannedDevices,
-        connectionState
+        communication.connectionState
     ) { paired, scanned, connect ->
-        BluetoothUiState(
+        (BluetoothUiState(
             paired.map { it.map(deviceUiMapper) },
             scanned.map { it.map(deviceUiMapper) }
-        ) + connect
+        ) + connect.map { it.map(connectionResultUiMapper) })
+            .apply { errorMessage(::send) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BluetoothUiState())
 
 
     fun startScanning() = repository.discoverDevices()
 
     fun stopScanning() = repository.stopDiscoveringDevices()
-
-    fun isBlueToothEnabled(): Boolean = bluetoothStatus.isEnabled()
-
 
     fun connectTo(deviceUi: DeviceUi) {
         viewModelScope.launch {
@@ -62,6 +60,10 @@ class BluetoothViewModel @Inject constructor(
         viewModelScope.launch {
             communication.startServer(serverName)
         }
+    }
+
+    private fun send(message: String) {
+        _message.tryEmit(MessageEvent.Text(message))
     }
 
     override fun onCleared() {
