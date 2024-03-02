@@ -37,7 +37,7 @@ class BluetoothViewModel @Inject constructor(
             paired.map { it.map(deviceUiMapper) },
             scanned.map { it.map(deviceUiMapper) }
         ) + connect.map { it.map(connectionResultUiMapper) })
-            .apply { errorMessage(::send) }
+            .also { it.message(::send) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BluetoothUiState())
 
 
