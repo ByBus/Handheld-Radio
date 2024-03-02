@@ -62,16 +62,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                LaunchedEffect(key1 = uiState.isConnected) {
-                    if (uiState.isConnected) {
-                        Toast.makeText(
-                            applicationContext,
-                            getString(R.string.devices_are_connected),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-
                 when {
                     uiState.isConnecting -> {
                         Column(
