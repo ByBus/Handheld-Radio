@@ -13,7 +13,7 @@ interface ConnectionResultUi {
             bluetoothUiState.copy(
                 isConnected = connected,
                 isConnecting = connecting,
-                errorMessage = errorMessage
+                toastMessage = errorMessage
             )
     }
 
@@ -29,12 +29,14 @@ interface ConnectionResultUi {
         override val connected = true
     }
 
-    class DeviceConnected(private val device: Device) : Base() {
+    class DeviceConnected(device: Device, endMessage: String) : Base() {
         override val connected = true
+        override val errorMessage = "${device.deviceName} $endMessage"
     }
 
-    class DeviceDisconnected(private val device: Device) : Base() {
+    class DeviceDisconnected(device: Device, endMessage: String) : Base() {
         override val connected = false
+        override val errorMessage = "${device.deviceName} $endMessage"
     }
 
     class Error(override val errorMessage: String) : Base()

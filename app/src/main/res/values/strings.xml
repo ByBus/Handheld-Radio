@@ -9,4 +9,6 @@
     <string name="devices_are_connected">Devices are connected</string>
     <string name="start_server">Start server</string>
     <string name="please_wait">Please wait…</string>
+    <string name="is_disconnected">" is disconnected"</string>
+    <string name="was_disconnected">" was disconnected"</string>
 </resources>

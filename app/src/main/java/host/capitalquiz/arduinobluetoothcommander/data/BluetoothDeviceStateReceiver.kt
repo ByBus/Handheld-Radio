@@ -11,8 +11,6 @@ import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
@@ -21,8 +19,7 @@ class BluetoothDeviceStateReceiver @Inject constructor(
 ) : BroadcastReceiver(), DeviceConnectionWatcher {
     private var isRegistered = false
     private var currentWatchingDevice = Device("", "")
-    private val _connectionState = MutableStateFlow<ConnectionResult>(ConnectionResult.Idle)
-    override val connectionState = _connectionState.asStateFlow()
+    private var listener: ((ConnectionResult) -> Unit)? = null
 
     override fun onReceive(context: Context, intent: Intent) {
         val device = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -40,8 +37,12 @@ class BluetoothDeviceStateReceiver @Inject constructor(
 
             else -> return
         }.let { event ->
-            _connectionState.tryEmit(event)
+            listener?.invoke(event)
         }
+    }
+
+    override fun listenForConnectionResult(callback: ((ConnectionResult) -> Unit)?) {
+        this.listener = callback
     }
 
     override fun watchFor(device: Device) {

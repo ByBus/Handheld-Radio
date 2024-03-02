@@ -4,9 +4,12 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
-import host.capitalquiz.arduinobluetoothcommander.domain.Client
+import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.UUID
@@ -20,37 +23,41 @@ class BluetoothClient @Inject constructor(
     private val dispatcher: CoroutineDispatcher,
 ) : Client {
     private val adapter get() = bluetoothManager?.adapter
-    private var clientSocket: BluetoothSocket? = null
-    override val connectionState = connectionWatcher.connectionState
+    override var socket: BluetoothSocket? = null
 
-    override suspend fun connect(device: Device, sdpRecord: UUID) {
+    override fun connect(device: Device, sdpRecord: UUID) = callbackFlow {
+        val listener = { result: ConnectionResult ->
+            trySend(result)
+            Unit
+        }
         init()
         withContext(dispatcher) {
             adapter?.cancelDiscovery()
             val btDevice = adapter?.getRemoteDevice(device.mac)
 
-            clientSocket = btDevice
+            socket = btDevice
                 ?.createRfcommSocketToServiceRecord(sdpRecord)
 
-            clientSocket?.let { socket ->
+            socket?.let { clientSocket ->
                 try {
+                    connectionWatcher.listenForConnectionResult(listener)
                     connectionWatcher.watchFor(device)
-                    socket.connect()
+                    clientSocket.connect()
                 } catch (e: IOException) {
-                    socket.close()
-                    clientSocket = null
+                    close()
                 }
             }
         }
-    }
+        awaitClose { connectionWatcher.listenForConnectionResult(null) }
+    }.flowOn(dispatcher)
 
     override fun init() {
         connectionWatcher.init()
     }
 
     override fun close() {
-        clientSocket?.close()
-        clientSocket = null
+        socket?.close()
+        socket = null
         connectionWatcher.close()
     }
 }

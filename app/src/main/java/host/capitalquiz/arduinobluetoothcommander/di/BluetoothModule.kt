@@ -10,23 +10,21 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import host.capitalquiz.arduinobluetoothcommander.R
-import host.capitalquiz.arduinobluetoothcommander.data.BluetoothClient
 import host.capitalquiz.arduinobluetoothcommander.data.BluetoothDeviceStateReceiver
 import host.capitalquiz.arduinobluetoothcommander.data.BluetoothDevicesRepository
-import host.capitalquiz.arduinobluetoothcommander.data.BluetoothServer
+import host.capitalquiz.arduinobluetoothcommander.data.BluetoothMessageDecoder
 import host.capitalquiz.arduinobluetoothcommander.data.BluetoothStatus
+import host.capitalquiz.arduinobluetoothcommander.data.ConnectionModeFactory
 import host.capitalquiz.arduinobluetoothcommander.data.DeviceConnectionWatcher
 import host.capitalquiz.arduinobluetoothcommander.data.DevicesClosableDataSource
 import host.capitalquiz.arduinobluetoothcommander.data.DevicesCommunication
 import host.capitalquiz.arduinobluetoothcommander.data.FoundDevicesReceiver
 import host.capitalquiz.arduinobluetoothcommander.data.PairedDevicesDataSource
 import host.capitalquiz.arduinobluetoothcommander.domain.BluetoothChecker
-import host.capitalquiz.arduinobluetoothcommander.domain.Client
 import host.capitalquiz.arduinobluetoothcommander.domain.Communication
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.DeviceMapper
 import host.capitalquiz.arduinobluetoothcommander.domain.DevicesRepository
-import host.capitalquiz.arduinobluetoothcommander.domain.Server
 import host.capitalquiz.arduinobluetoothcommander.presentation.ConnectionResultUi
 import host.capitalquiz.arduinobluetoothcommander.presentation.ui.DeviceUi
 import kotlinx.coroutines.CoroutineDispatcher
@@ -53,16 +51,16 @@ interface BluetoothModule {
     fun bindBluetoothStatus(impl: BluetoothStatus): BluetoothChecker
 
     @Binds
-    fun bindServer(impl: BluetoothServer): Server
-
-    @Binds
-    fun bindClient(impl: BluetoothClient): Client
-
-    @Binds
     fun bindDevicesCommunication(impl: DevicesCommunication): Communication
 
     @Binds
     fun provideDeviceConnectionWatcher(impl: BluetoothDeviceStateReceiver): DeviceConnectionWatcher
+
+    @Binds
+    fun bindBluetoothMessageDecoder(impl: BluetoothMessageDecoder.Base): BluetoothMessageDecoder
+
+    @Binds
+    fun bindConnectionModeFactory(impl: ConnectionModeFactory.Base): ConnectionModeFactory
 
     companion object {
         @Singleton
@@ -84,16 +82,22 @@ interface BluetoothModule {
         }
 
         @Provides
-        fun provideConnectionResultToUiMapper(): ConnectionResult.Mapper<ConnectionResultUi> {
+        fun provideConnectionResultToUiMapper(@ApplicationContext context: Context): ConnectionResult.Mapper<ConnectionResultUi> {
             return ConnectionResult.Mapper { result ->
                 when (result) {
                     is ConnectionResult.Idle -> ConnectionResultUi.Idle
                     is ConnectionResult.Connected -> ConnectionResultUi.ConnectionEstablished
                     is ConnectionResult.Connect ->
-                        ConnectionResultUi.DeviceConnected(result.device)
+                        ConnectionResultUi.DeviceConnected(
+                            result.device,
+                            context.getString(R.string.is_disconnected)
+                        )
 
                     is ConnectionResult.Disconnect ->
-                        ConnectionResultUi.DeviceDisconnected(result.device)
+                        ConnectionResultUi.DeviceDisconnected(
+                            result.device,
+                            context.getString(R.string.was_disconnected)
+                        )
 
                     is ConnectionResult.Error -> ConnectionResultUi.Error(result.message)
                     is ConnectionResult.Connecting -> ConnectionResultUi.Connecting

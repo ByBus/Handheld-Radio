@@ -14,8 +14,8 @@ sealed interface MessageEvent {
         private var consumed = false
         override fun consume(block: (String) -> Unit) {
             if (consumed.not()) {
-                block.invoke(message)
                 consumed = true
+                block.invoke(message)
             }
         }
     }
