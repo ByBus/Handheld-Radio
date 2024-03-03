@@ -67,6 +67,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
