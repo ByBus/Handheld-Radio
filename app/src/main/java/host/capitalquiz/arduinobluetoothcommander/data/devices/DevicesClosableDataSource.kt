@@ -1,5 +1,6 @@
-package host.capitalquiz.arduinobluetoothcommander.data
+package host.capitalquiz.arduinobluetoothcommander.data.devices
 
+import host.capitalquiz.arduinobluetoothcommander.data.Closable
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
 import kotlinx.coroutines.flow.StateFlow
 

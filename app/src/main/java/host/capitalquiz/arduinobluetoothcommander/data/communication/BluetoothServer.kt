@@ -1,9 +1,10 @@
-package host.capitalquiz.arduinobluetoothcommander.data
+package host.capitalquiz.arduinobluetoothcommander.data.communication
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
+import host.capitalquiz.arduinobluetoothcommander.data.toDevice
 import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import kotlinx.coroutines.CoroutineDispatcher

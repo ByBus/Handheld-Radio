@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.data
+package host.capitalquiz.arduinobluetoothcommander.data.communication
 
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.Device

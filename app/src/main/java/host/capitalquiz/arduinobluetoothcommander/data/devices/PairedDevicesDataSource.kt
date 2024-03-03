@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.data
+package host.capitalquiz.arduinobluetoothcommander.data.devices
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothManager

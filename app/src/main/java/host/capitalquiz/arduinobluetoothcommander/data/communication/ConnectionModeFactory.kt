@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.data
+package host.capitalquiz.arduinobluetoothcommander.data.communication
 
 import android.bluetooth.BluetoothManager
 import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO

@@ -8,5 +8,10 @@ interface Communication {
     suspend fun startServer(serverName: String)
 
     suspend fun connectToDevice(device: Device)
+
+    fun receive(): Flow<BluetoothMessage>
+
+    suspend fun send(message: BluetoothMessage): Boolean
+
     fun close()
 }

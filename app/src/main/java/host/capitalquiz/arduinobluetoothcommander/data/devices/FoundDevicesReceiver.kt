@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.data
+package host.capitalquiz.arduinobluetoothcommander.data.devices
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
+import host.capitalquiz.arduinobluetoothcommander.data.toDevice
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

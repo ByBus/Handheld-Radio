@@ -1,6 +1,7 @@
-package host.capitalquiz.arduinobluetoothcommander.data
+package host.capitalquiz.arduinobluetoothcommander.data.communication
 
 import android.bluetooth.BluetoothSocket
+import host.capitalquiz.arduinobluetoothcommander.data.Closable
 
 interface SocketHolder : Closable {
     var socket: BluetoothSocket?

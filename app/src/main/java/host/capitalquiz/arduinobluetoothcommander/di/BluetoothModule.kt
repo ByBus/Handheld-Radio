@@ -10,16 +10,17 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import host.capitalquiz.arduinobluetoothcommander.R
-import host.capitalquiz.arduinobluetoothcommander.data.BluetoothDeviceStateReceiver
-import host.capitalquiz.arduinobluetoothcommander.data.BluetoothDevicesRepository
-import host.capitalquiz.arduinobluetoothcommander.data.BluetoothMessageDecoder
-import host.capitalquiz.arduinobluetoothcommander.data.BluetoothStatus
-import host.capitalquiz.arduinobluetoothcommander.data.ConnectionModeFactory
-import host.capitalquiz.arduinobluetoothcommander.data.DeviceConnectionWatcher
-import host.capitalquiz.arduinobluetoothcommander.data.DevicesClosableDataSource
-import host.capitalquiz.arduinobluetoothcommander.data.DevicesCommunication
-import host.capitalquiz.arduinobluetoothcommander.data.FoundDevicesReceiver
-import host.capitalquiz.arduinobluetoothcommander.data.PairedDevicesDataSource
+import host.capitalquiz.arduinobluetoothcommander.data.communication.BluetoothDeviceStateReceiver
+import host.capitalquiz.arduinobluetoothcommander.data.communication.BluetoothMessageDecoder
+import host.capitalquiz.arduinobluetoothcommander.data.communication.ConnectionModeFactory
+import host.capitalquiz.arduinobluetoothcommander.data.communication.DeviceConnectionWatcher
+import host.capitalquiz.arduinobluetoothcommander.data.communication.DevicesCommunication
+import host.capitalquiz.arduinobluetoothcommander.data.devices.BluetoothDevicesRepository
+import host.capitalquiz.arduinobluetoothcommander.data.devices.BluetoothStatus
+import host.capitalquiz.arduinobluetoothcommander.data.devices.DeviceNameProvider
+import host.capitalquiz.arduinobluetoothcommander.data.devices.DevicesClosableDataSource
+import host.capitalquiz.arduinobluetoothcommander.data.devices.FoundDevicesReceiver
+import host.capitalquiz.arduinobluetoothcommander.data.devices.PairedDevicesDataSource
 import host.capitalquiz.arduinobluetoothcommander.domain.BluetoothChecker
 import host.capitalquiz.arduinobluetoothcommander.domain.Communication
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
@@ -61,6 +62,9 @@ interface BluetoothModule {
 
     @Binds
     fun bindConnectionModeFactory(impl: ConnectionModeFactory.Base): ConnectionModeFactory
+
+    @Binds
+    fun bindDeviceNameProvider(impl: DeviceNameProvider.BluetoothName): DeviceNameProvider
 
     companion object {
         @Singleton
