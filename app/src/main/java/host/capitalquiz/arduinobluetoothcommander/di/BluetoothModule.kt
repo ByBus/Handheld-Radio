@@ -3,6 +3,7 @@ package host.capitalquiz.arduinobluetoothcommander.di
 import android.bluetooth.BluetoothManager
 import android.content.Context
 import androidx.core.content.getSystemService
+import androidx.room.Room
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -21,6 +22,8 @@ import host.capitalquiz.arduinobluetoothcommander.data.devices.DeviceNameProvide
 import host.capitalquiz.arduinobluetoothcommander.data.devices.DevicesClosableDataSource
 import host.capitalquiz.arduinobluetoothcommander.data.devices.FoundDevicesReceiver
 import host.capitalquiz.arduinobluetoothcommander.data.devices.PairedDevicesDataSource
+import host.capitalquiz.arduinobluetoothcommander.data.messages.MessagesDao
+import host.capitalquiz.arduinobluetoothcommander.data.messages.MessagesDatabase
 import host.capitalquiz.arduinobluetoothcommander.domain.BluetoothChecker
 import host.capitalquiz.arduinobluetoothcommander.domain.Communication
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
@@ -52,6 +55,7 @@ interface BluetoothModule {
     fun bindBluetoothStatus(impl: BluetoothStatus): BluetoothChecker
 
     @Binds
+    @Singleton
     fun bindDevicesCommunication(impl: DevicesCommunication): Communication
 
     @Binds
@@ -108,5 +112,15 @@ interface BluetoothModule {
                 }
             }
         }
+
+        @Provides
+        @Singleton
+        fun provideMessagesDatabase(@ApplicationContext context: Context): MessagesDatabase {
+            return Room.databaseBuilder(context, MessagesDatabase::class.java, "messages.db")
+                .build()
+        }
+
+        @Provides
+        fun provideMessagesDao(database: MessagesDatabase): MessagesDao = database.dao()
     }
 }

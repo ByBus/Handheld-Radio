@@ -1,6 +1,8 @@
 package host.capitalquiz.arduinobluetoothcommander.data.communication
 
+import android.annotation.SuppressLint
 import android.util.Log
+import host.capitalquiz.arduinobluetoothcommander.data.toDevice
 import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
 import host.capitalquiz.arduinobluetoothcommander.domain.BluetoothMessage
 import host.capitalquiz.arduinobluetoothcommander.domain.Communication
@@ -62,10 +64,11 @@ class DevicesCommunication @Inject constructor(
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun receive(): Flow<BluetoothMessage> {
         return flow {
             if (currentMode.socket?.isConnected != true) return@flow
-
+            val connectedDevice = currentMode.socket?.remoteDevice!!.toDevice()
             val buffer = ByteArray(1024)
             val inputStream = currentMode.socket!!.inputStream
 
@@ -81,6 +84,9 @@ class DevicesCommunication @Inject constructor(
                         }
                     } catch (e: IOException) {
                         Log.d("Communication", "Input stream was disconnected", e)
+                        _connectionState.tryEmit(
+                            ConnectionResult.Disconnect(connectedDevice)
+                        )
                         break
                     }
                     emit(decoder.decode(bos.toByteArray()))

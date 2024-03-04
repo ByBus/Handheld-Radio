@@ -22,7 +22,7 @@ import host.capitalquiz.arduinobluetoothcommander.R
 import host.capitalquiz.arduinobluetoothcommander.presentation.BluetoothUiState
 
 @Composable
-fun DevicesScreen(
+fun DevicesList(
     state: BluetoothUiState,
     onStartSearch: () -> Unit,
     onStopSearch: () -> Unit,
