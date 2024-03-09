@@ -10,11 +10,11 @@ import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onCompletion
 import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
 
+private const val SERVER_CONNECTION_TIMEOUT_MS = 30_000
 @SuppressLint("MissingPermission")
 class BluetoothServer @Inject constructor(
     private val bluetoothManager: BluetoothManager?,
@@ -28,41 +28,40 @@ class BluetoothServer @Inject constructor(
     private val adapter get() = bluetoothManager?.adapter
 
     override fun start(serverName: String, sdpRecord: UUID) = flow {
-        val oldName = adapter?.name
         val serverSocket = adapter?.listenUsingRfcommWithServiceRecord(
             serverName,
             sdpRecord
         )
         socket = try {
-            adapter?.name = serverName
-            serverSocket?.accept(30_000)
-        } catch (e: IOException) {
+            serverSocket?.accept(SERVER_CONNECTION_TIMEOUT_MS)
+        } catch (e: Exception) {
             emit(ConnectionResult.Error(e.message.toString()))
             null
         } finally {
-            oldName?.let { adapter?.name = it }
+            closeServerSocket()
         }
-
         socket?.let { socket ->
-            serverSocket?.close()
             val device = socket.remoteDevice.toDevice()
             emit(ConnectionResult.Connect(device))
         } ?: emit(ConnectionResult.Error("Timeout exceeded"))
-    }.onCompletion {
-        serverSocket?.close()
-        serverSocket = null
     }.flowOn(dispatcher)
 
     override fun init() = Unit
 
-    override fun close() {
+    private fun closeServerSocket() {
         try {
             serverSocket?.close()
             serverSocket = null
+        } catch (_: IOException) {
+        }
+    }
+
+    override fun close() {
+        try {
             socket?.close()
             socket = null
         } catch (_: IOException) {
-
         }
+        closeServerSocket()
     }
 }

@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.presentation.ui
+package host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen
 
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
 

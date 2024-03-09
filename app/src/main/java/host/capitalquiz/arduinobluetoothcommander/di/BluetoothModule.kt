@@ -22,15 +22,14 @@ import host.capitalquiz.arduinobluetoothcommander.data.devices.DeviceNameProvide
 import host.capitalquiz.arduinobluetoothcommander.data.devices.DevicesClosableDataSource
 import host.capitalquiz.arduinobluetoothcommander.data.devices.FoundDevicesReceiver
 import host.capitalquiz.arduinobluetoothcommander.data.devices.PairedDevicesDataSource
-import host.capitalquiz.arduinobluetoothcommander.data.messages.MessagesDao
 import host.capitalquiz.arduinobluetoothcommander.data.messages.MessagesDatabase
 import host.capitalquiz.arduinobluetoothcommander.domain.BluetoothChecker
 import host.capitalquiz.arduinobluetoothcommander.domain.Communication
-import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
+import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult.*
 import host.capitalquiz.arduinobluetoothcommander.domain.DeviceMapper
 import host.capitalquiz.arduinobluetoothcommander.domain.DevicesRepository
 import host.capitalquiz.arduinobluetoothcommander.presentation.ConnectionResultUi
-import host.capitalquiz.arduinobluetoothcommander.presentation.ui.DeviceUi
+import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.DeviceUi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
@@ -90,25 +89,25 @@ interface BluetoothModule {
         }
 
         @Provides
-        fun provideConnectionResultToUiMapper(@ApplicationContext context: Context): ConnectionResult.Mapper<ConnectionResultUi> {
-            return ConnectionResult.Mapper { result ->
+        fun provideConnectionResultToUiMapper(@ApplicationContext context: Context): Mapper<ConnectionResultUi> {
+            return Mapper { result ->
                 when (result) {
-                    is ConnectionResult.Idle -> ConnectionResultUi.Idle
-                    is ConnectionResult.Connected -> ConnectionResultUi.ConnectionEstablished
-                    is ConnectionResult.Connect ->
+                    is Idle -> ConnectionResultUi.Idle
+                    is Connected -> ConnectionResultUi.ConnectionEstablished
+                    is Connect ->
                         ConnectionResultUi.DeviceConnected(
                             result.device,
-                            context.getString(R.string.is_disconnected)
+                            context.getString(R.string.connected)
                         )
 
-                    is ConnectionResult.Disconnect ->
+                    is Disconnect ->
                         ConnectionResultUi.DeviceDisconnected(
                             result.device,
                             context.getString(R.string.was_disconnected)
                         )
 
-                    is ConnectionResult.Error -> ConnectionResultUi.Error(result.message)
-                    is ConnectionResult.Connecting -> ConnectionResultUi.Connecting
+                    is Error -> ConnectionResultUi.Error(result.message)
+                    is Connecting -> ConnectionResultUi.Connecting(result.duration)
                 }
             }
         }
@@ -119,8 +118,5 @@ interface BluetoothModule {
             return Room.databaseBuilder(context, MessagesDatabase::class.java, "messages.db")
                 .build()
         }
-
-        @Provides
-        fun provideMessagesDao(database: MessagesDatabase): MessagesDao = database.dao()
     }
 }

@@ -1,16 +1,16 @@
-package host.capitalquiz.arduinobluetoothcommander.presentation
+package host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen
 
-sealed interface MessageEvent {
+sealed interface Event {
     fun consume(block: (String) -> Unit)
 
-    object Empty : MessageEvent {
+    object Empty : Event {
         override fun consume(block: (String) -> Unit) = Unit
     }
 
     data class Text(
         private val message: String,
-        private val id: Long = System.currentTimeMillis(),
-    ) : MessageEvent {
+//        private val id: Long = System.currentTimeMillis(),
+    ) : Event {
         private var consumed = false
         override fun consume(block: (String) -> Unit) {
             if (consumed.not()) {

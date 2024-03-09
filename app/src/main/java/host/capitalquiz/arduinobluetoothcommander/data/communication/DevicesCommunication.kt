@@ -1,7 +1,6 @@
 package host.capitalquiz.arduinobluetoothcommander.data.communication
 
 import android.annotation.SuppressLint
-import android.util.Log
 import host.capitalquiz.arduinobluetoothcommander.data.toDevice
 import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
 import host.capitalquiz.arduinobluetoothcommander.domain.BluetoothMessage
@@ -12,6 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,8 +19,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
-import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
 
@@ -31,7 +29,7 @@ class DevicesCommunication @Inject constructor(
     private val dispatcher: CoroutineDispatcher,
 ) : Communication {
     private var connectionResultJob: Job? = null
-    private val scope = CoroutineScope(dispatcher)
+    private var scope: CoroutineScope? = null
     private val _connectionState = MutableStateFlow<ConnectionResult>(ConnectionResult.Idle)
     override val connectionState = _connectionState.asStateFlow()
 
@@ -39,27 +37,28 @@ class DevicesCommunication @Inject constructor(
 
     override suspend fun startServer(serverName: String) {
         val server = modeFactory.createServer()
-        setMode(server)
+        setMode(server, 30_000)
         val connectionResult = server.start(serverName, commonDeviceUUID)
         updateConnectionResult(connectionResult)
     }
 
     override suspend fun connectToDevice(device: Device) {
         val client = modeFactory.createClient()
-        setMode(client)
+        setMode(client, 10_000)
         val connectionResult = client.connect(device, commonDeviceUUID)
         updateConnectionResult(connectionResult)
     }
 
-    private fun setMode(socketHolder: SocketHolder) {
-        _connectionState.tryEmit(ConnectionResult.Connecting())
+    private fun setMode(socketHolder: SocketHolder, connectionDuration: Long) {
+        _connectionState.tryEmit(ConnectionResult.Connecting(connectionDuration))
         currentMode.close()
         currentMode = socketHolder
     }
 
     private fun updateConnectionResult(connectionResult: Flow<ConnectionResult>) {
+        if (scope == null) scope = CoroutineScope(dispatcher)
         connectionResultJob?.cancel()
-        connectionResultJob = scope.launch {
+        connectionResultJob = scope?.launch {
             connectionResult.collect(_connectionState::tryEmit)
         }
     }
@@ -67,30 +66,21 @@ class DevicesCommunication @Inject constructor(
     @SuppressLint("MissingPermission")
     override fun receive(): Flow<BluetoothMessage> {
         return flow {
+            delay(1000)
             if (currentMode.socket?.isConnected != true) return@flow
             val connectedDevice = currentMode.socket?.remoteDevice!!.toDevice()
             val buffer = ByteArray(1024)
             val inputStream = currentMode.socket!!.inputStream
-
-            ByteArrayOutputStream().use { bos ->
-                while (true) {
-                    bos.reset()
-                    try {
-                        var bytesRead: Int
-                        while (
-                            inputStream.read(buffer, 0, buffer.size).also { bytesRead = it } != -1
-                        ) {
-                            bos.write(buffer, 0, bytesRead)
-                        }
-                    } catch (e: IOException) {
-                        Log.d("Communication", "Input stream was disconnected", e)
-                        _connectionState.tryEmit(
-                            ConnectionResult.Disconnect(connectedDevice)
-                        )
-                        break
-                    }
-                    emit(decoder.decode(bos.toByteArray()))
+            while (true) {
+                try {
+                    inputStream.read(buffer)
+                } catch (e: Exception) {
+                    _connectionState.tryEmit(
+                        ConnectionResult.Disconnect(connectedDevice)
+                    )
+                    break
                 }
+                emit(decoder.decode(buffer))
             }
         }.flowOn(dispatcher)
     }
@@ -108,7 +98,9 @@ class DevicesCommunication @Inject constructor(
     }
 
     override fun close() {
-        scope.cancel()
+        scope?.cancel()
+        scope = null
+        connectionResultJob = null
         currentMode.close()
     }
 

@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.presentation.contracts
+package host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.contracts
 
 import android.Manifest
 import android.app.Activity

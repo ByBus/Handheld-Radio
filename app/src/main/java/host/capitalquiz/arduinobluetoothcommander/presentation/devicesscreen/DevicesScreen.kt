@@ -1,11 +1,12 @@
-package host.capitalquiz.arduinobluetoothcommander.presentation
+package host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen
 
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,17 +18,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import host.capitalquiz.arduinobluetoothcommander.R
-import host.capitalquiz.arduinobluetoothcommander.presentation.contracts.EnableBluetoothContract
-import host.capitalquiz.arduinobluetoothcommander.presentation.contracts.MakeDiscoverableOverBluetoothContract
-import host.capitalquiz.arduinobluetoothcommander.presentation.contracts.RequestAllBluetoothPermissionsContract
-import host.capitalquiz.arduinobluetoothcommander.presentation.contracts.launch
-import host.capitalquiz.arduinobluetoothcommander.presentation.ui.DevicesList
+import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.contracts.EnableBluetoothContract
+import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.contracts.MakeDiscoverableOverBluetoothContract
+import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.contracts.RequestAllBluetoothPermissionsContract
+import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.contracts.launch
+import host.capitalquiz.arduinobluetoothcommander.ui.components.TimedProgressBar
 
 @Composable
 fun DevicesScreen(
     viewModel: BluetoothViewModel = hiltViewModel(),
+    onNavigateToChat: (deviceName: String) -> Unit,
 ) {
     val serverName = stringResource(R.string.server_name)
     val makeDiscoverableOverBluetoothLauncher =
@@ -63,6 +66,12 @@ fun DevicesScreen(
         }
     }
 
+    LaunchedEffect(key1 = uiState) {
+        if (uiState.isConnected) {
+            uiState.deviceName(onNavigateToChat::invoke)
+        }
+    }
+
     when {
         uiState.isConnecting -> {
             Column(
@@ -70,8 +79,13 @@ fun DevicesScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                CircularProgressIndicator()
                 Text(text = stringResource(R.string.please_wait))
+                TimedProgressBar(
+                    duration = uiState.showProgressDuration,
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .fillMaxWidth()
+                )
             }
         }
 

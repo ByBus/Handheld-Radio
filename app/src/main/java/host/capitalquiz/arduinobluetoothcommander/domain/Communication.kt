@@ -1,9 +1,10 @@
 package host.capitalquiz.arduinobluetoothcommander.domain
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface Communication {
-    val connectionState: Flow<ConnectionResult>
+    val connectionState: StateFlow<ConnectionResult>
 
     suspend fun startServer(serverName: String)
 

@@ -8,12 +8,16 @@ import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
+
+private const val CONNECTION_TIMEOUT_MS = 10_000L
 
 @SuppressLint("MissingPermission")
 class BluetoothClient @Inject constructor(
@@ -38,10 +42,18 @@ class BluetoothClient @Inject constructor(
             socket = btDevice
                 ?.createRfcommSocketToServiceRecord(sdpRecord)
 
+            launch {
+                delay(CONNECTION_TIMEOUT_MS)
+                if (socket?.isConnected != true) {
+                    trySend(ConnectionResult.Error("Timeout exceeded"))
+                    close()
+                }
+            }
+
             socket?.let { clientSocket ->
                 try {
-                    connectionWatcher.listenForConnectionResult(listener)
                     connectionWatcher.watchFor(device)
+                    connectionWatcher.listenForConnectionResult(listener)
                     clientSocket.connect()
                 } catch (e: IOException) {
                     close()
@@ -56,8 +68,12 @@ class BluetoothClient @Inject constructor(
     }
 
     override fun close() {
-        socket?.close()
-        socket = null
-        connectionWatcher.close()
+        try {
+            socket?.close()
+            socket = null
+        } catch (_: IOException) {
+        } finally {
+            connectionWatcher.close()
+        }
     }
 }

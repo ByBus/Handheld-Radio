@@ -5,7 +5,7 @@ sealed interface ConnectionResult {
 
     object Idle : ConnectionResult
     object Connected : ConnectionResult
-    class Connecting : ConnectionResult
+    class Connecting(val duration: Long) : ConnectionResult
     data class Error(val message: String) : ConnectionResult
     data class Connect(val device: Device) : ConnectionResult
     data class Disconnect(val device: Device) : ConnectionResult
