@@ -53,6 +53,8 @@ class BluetoothViewModel @Inject constructor(
         }
     }
 
+    fun disconnect() = communication.close()
+
     fun startScanning() {
         oldState.update { it.copy(isDiscoveringDevices = true) }
         repository.discoverDevices()

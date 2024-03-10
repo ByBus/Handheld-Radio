@@ -56,13 +56,16 @@ class BluetoothClient @Inject constructor(
 //                    close()
 //                }
 //            }
-
+                var wasConnected = false
                 socket?.let { clientSocket ->
                     try {
                         connectionWatcher.watchFor(device)
                         connectionWatcher.listenForConnectionResult(listener)
                         clientSocket.connect()
+                        wasConnected = true
                     } catch (e: IOException) {
+                        if (wasConnected.not())
+                            trySend(ConnectionResult.Error("Please try again after few seconds"))
                         close()
                     }
                 }

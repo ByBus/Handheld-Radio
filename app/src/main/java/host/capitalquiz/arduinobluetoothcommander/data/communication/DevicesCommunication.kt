@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -62,7 +61,7 @@ class DevicesCommunication @Inject constructor(
     }
 
     private fun updateConnectionResult(connectionResult: Flow<ConnectionResult>) {
-        if (scope?.isActive != true) scope = CoroutineScope(dispatcher)
+        if (scope == null) scope = CoroutineScope(dispatcher)
         connectionResultJob?.cancel()
         connectionResultJob = scope?.launch {
             connectionResult.collect(_connectionState::tryEmit)
@@ -104,6 +103,7 @@ class DevicesCommunication @Inject constructor(
     }
 
     override fun close() {
+        _connectionState.tryEmit(ConnectionResult.Error("Connection aborted"))
         scope?.cancel()
         scope = null
         connectionResultJob = null

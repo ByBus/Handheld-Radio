@@ -1,6 +1,7 @@
 package host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -70,6 +71,9 @@ fun DevicesScreen(
         if (uiState.isConnected) uiState.deviceName(onNavigateToChat::invoke)
     }
 
+    BackHandler(enabled = uiState.isConnecting) {
+        viewModel.disconnect()
+    }
     when {
         uiState.isConnecting -> {
             Column(
