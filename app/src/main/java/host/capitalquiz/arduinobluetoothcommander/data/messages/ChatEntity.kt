@@ -10,6 +10,8 @@ import androidx.room.Relation
 data class ChatEntity(
     @ColumnInfo(name = "name")
     val name: String,
+    @ColumnInfo(name = "mac")
+    val mac: String,
     @ColumnInfo(name = "date")
     val date: Long,
 ) {

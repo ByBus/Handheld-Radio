@@ -31,7 +31,7 @@ import host.capitalquiz.arduinobluetoothcommander.ui.components.TimedProgressBar
 @Composable
 fun DevicesScreen(
     viewModel: BluetoothViewModel = hiltViewModel(),
-    onNavigateToChat: (deviceName: String) -> Unit,
+    onNavigateToChat: (deviceName: String, mac: String) -> Unit,
 ) {
     val serverName = stringResource(R.string.server_name)
     val makeDiscoverableOverBluetoothLauncher =
@@ -68,7 +68,7 @@ fun DevicesScreen(
     }
 
     LaunchedEffect(key1 = uiState.isConnected) {
-        if (uiState.isConnected) uiState.deviceName(onNavigateToChat::invoke)
+        if (uiState.isConnected) uiState.deviceData(onNavigateToChat::invoke)
     }
 
     BackHandler(enabled = uiState.isConnecting) {

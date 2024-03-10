@@ -12,6 +12,7 @@ data class BluetoothUiState(
     val isDiscoveringDevices: Boolean = false,
     private val device: Device? = null,
 ) {
-    fun deviceName(nameConsumer: (deviceName: String) -> Unit) =
-        device?.deviceName?.let(nameConsumer)
+    fun deviceData(nameConsumer: (deviceName: String, mac: String) -> Unit) {
+        if (device?.deviceName != null) nameConsumer(device.deviceName, device.mac)
+    }
 }

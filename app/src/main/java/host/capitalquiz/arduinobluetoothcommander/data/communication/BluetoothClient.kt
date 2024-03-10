@@ -48,25 +48,13 @@ class BluetoothClient @Inject constructor(
                 socket = btDevice
                     ?.createRfcommSocketToServiceRecord(sdpRecord)
 
-//            launch {
-//                Log.d("BluetoothClient", "connect: before timeout delay ${this@BluetoothClient}")
-//                delay(timeoutMs.toLong())
-//                Log.d("BluetoothClient", "connect: timeout  ${this@BluetoothClient}")
-//                if (socket?.isConnected != true) {
-//                    trySend(ConnectionResult.Error("Timeout exceeded"))
-//                    close()
-//                }
-//            }
-                var wasConnected = false
                 socket?.let { clientSocket ->
                     try {
                         connectionWatcher.watchFor(device)
                         connectionWatcher.listenForConnectionResult(listener)
                         clientSocket.connect()
-                        wasConnected = true
                     } catch (e: IOException) {
-                        if (wasConnected.not())
-                            trySend(ConnectionError.SocketBusy)
+                        trySend(ConnectionError.SocketBusy)
                         close()
                     }
                 }

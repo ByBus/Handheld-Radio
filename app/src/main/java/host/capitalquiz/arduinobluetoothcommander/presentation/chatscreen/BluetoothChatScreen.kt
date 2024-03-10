@@ -44,10 +44,10 @@ import host.capitalquiz.arduinobluetoothcommander.R
     ExperimentalFoundationApi::class
 )
 @Composable
-fun BluetoothChatScreen(chatName: String, onDisconnect: () -> Unit) {
+fun BluetoothChatScreen(chatName: String, deviceMac: String, onDisconnect: () -> Unit) {
     val viewModel =
         hiltViewModel<BluetoothChatViewModel, BluetoothChatViewModel.Factory> { factory ->
-            factory.create(chatName)
+            factory.create(chatName, deviceMac)
         }
 
     val uiState by viewModel.uiState.collectAsState()

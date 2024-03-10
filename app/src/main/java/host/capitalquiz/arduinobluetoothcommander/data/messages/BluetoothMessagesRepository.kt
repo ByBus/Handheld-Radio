@@ -27,10 +27,10 @@ class BluetoothMessagesRepository @Inject constructor(
     private var currentChatId: Long = 0
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun readMessages(from: String): Flow<List<Message>> = flow {
+    override fun readMessages(mac: String, newName: String): Flow<List<Message>> = flow {
         currentChatId =
-            messagesLocalDataSource.findChatByName(from)?.id ?: messagesLocalDataSource.create(
-                Chat(-125, from, System.currentTimeMillis())
+            messagesLocalDataSource.findChatByMac(mac)?.id ?: messagesLocalDataSource.create(
+                Chat(-125, newName, mac, System.currentTimeMillis())
             )
         emit(currentChatId)
     }.flatMapLatest { messagesLocalDataSource.getMessages(it) }.flowOn(dispatcher)

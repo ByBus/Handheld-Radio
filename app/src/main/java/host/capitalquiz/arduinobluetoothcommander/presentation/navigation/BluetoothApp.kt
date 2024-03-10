@@ -21,18 +21,26 @@ fun BluetoothApp(navController: NavHostController = rememberNavController()) {
     ) {
         composable(route = Screens.Devices.route) {
             DevicesScreen(
-                onNavigateToChat = { deviceName ->
-                    navController.navigate(Screens.Chat.destination(deviceName))
+                onNavigateToChat = { deviceName, mac ->
+                    navController.navigate(Screens.Chat.destination(deviceName, mac))
                 }
             )
         }
         composable(
             route = Screens.Chat.route,
-            arguments = listOf(navArgument(Screens.Chat.arg1Name) {})
+            arguments = listOf(
+                navArgument(Screens.Chat.argumentN(0)) {},
+                navArgument(Screens.Chat.argumentN(1)) {})
         ) { backStackEntry ->
             val chatName =
-                backStackEntry.arguments?.getString(Screens.Chat.arg1Name) ?: return@composable
-            BluetoothChatScreen(chatName = chatName, onDisconnect = navController::popBackStack)
+                backStackEntry.arguments?.getString(Screens.Chat.argumentN(0)) ?: return@composable
+            val macAddress =
+                backStackEntry.arguments?.getString(Screens.Chat.argumentN(1)) ?: return@composable
+            BluetoothChatScreen(
+                chatName = chatName,
+                deviceMac = macAddress,
+                onDisconnect = navController::popBackStack
+            )
         }
     }
 }

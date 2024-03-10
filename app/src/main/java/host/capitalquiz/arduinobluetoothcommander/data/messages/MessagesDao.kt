@@ -13,8 +13,8 @@ interface MessagesDao {
     @Insert
     suspend fun insert(messageEntity: MessageEntity): Long
 
-    @Query("SELECT * FROM chats WHERE name = :chatName")
-    suspend fun findChatByName(chatName: String): ChatWithMessages?
+    @Query("SELECT * FROM chats WHERE mac = :mac")
+    suspend fun findChatByMac(mac: String): ChatWithMessages?
 
     @Insert
     suspend fun insert(chat: ChatEntity): Long

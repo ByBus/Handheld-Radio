@@ -100,6 +100,7 @@ interface BluetoothModule {
         @Singleton
         fun provideMessagesDatabase(@ApplicationContext context: Context): MessagesDatabase {
             return Room.databaseBuilder(context, MessagesDatabase::class.java, "messages.db")
+                .fallbackToDestructiveMigration()
                 .build()
         }
     }

@@ -20,7 +20,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = BluetoothChatViewModel.Factory::class)
 class BluetoothChatViewModel @AssistedInject constructor(
-    @Assisted val chatName: String,
+    @Assisted("name") val chatName: String,
+    @Assisted("mac") val macAddress: String,
     private val communication: Communication,
     private val messagesRepository: MessagesRepository,
     private val connectionResultMapper: ConnectionResult.Mapper<ChatConnectionUi>,
@@ -28,7 +29,7 @@ class BluetoothChatViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     val uiState = combine(
-        messagesRepository.readMessages(chatName)
+        messagesRepository.readMessages(macAddress, chatName)
             .map { messages -> messages.map { it.map(messageMapper) } },
         communication.connectionState.map { it.map(connectionResultMapper) }
     ) { messages, connectionState ->
@@ -54,6 +55,9 @@ class BluetoothChatViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(chatName: String): BluetoothChatViewModel
+        fun create(
+            @Assisted("name") chatName: String,
+            @Assisted("mac") macAddress: String,
+        ): BluetoothChatViewModel
     }
 }

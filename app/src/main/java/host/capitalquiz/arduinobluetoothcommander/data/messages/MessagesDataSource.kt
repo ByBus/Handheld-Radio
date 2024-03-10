@@ -11,7 +11,7 @@ interface MessagesDataSource {
 
     suspend fun insert(message: Message): Long
 
-    suspend fun findChatByName(name: String): Chat?
+    suspend fun findChatByMac(mac: String): Chat?
 
     suspend fun create(chat: Chat): Long
 
@@ -31,18 +31,19 @@ interface MessagesDataSource {
             }
         }
 
-        override suspend fun findChatByName(name: String): Chat? {
-            return dao.findChatByName(name)?.let { dbChat ->
+        override suspend fun findChatByMac(mac: String): Chat? {
+            return dao.findChatByMac(mac)?.let { dbChat ->
                 Chat(
                     dbChat.chat.id,
                     dbChat.chat.name,
+                    dbChat.chat.mac,
                     dbChat.chat.date,
                     dbChat.messages.map { it.toMessage() })
             }
         }
 
         override suspend fun create(chat: Chat): Long {
-            return dao.insert(ChatEntity(chat.name, chat.date))
+            return dao.insert(ChatEntity(chat.name, chat.mac, chat.date))
         }
     }
 }
