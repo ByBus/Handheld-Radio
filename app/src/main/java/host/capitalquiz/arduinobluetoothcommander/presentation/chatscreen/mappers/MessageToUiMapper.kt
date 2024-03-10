@@ -1,6 +1,8 @@
-package host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen
+package host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.mappers
 
 import host.capitalquiz.arduinobluetoothcommander.domain.MessageMapper
+import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.CurrentTimeProvider
+import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.MessageUi
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneId

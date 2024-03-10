@@ -11,6 +11,12 @@ sealed interface ConnectionResult {
     data class Disconnect(val device: Device) : ConnectionResult
 
     fun interface Mapper<R> {
-        operator fun invoke(connectionResult: ConnectionResult): R
+        operator fun invoke(result: ConnectionResult): R
     }
+}
+
+sealed interface ConnectionError : ConnectionResult {
+    object Timeout : ConnectionError
+    object SocketBusy : ConnectionError
+    object AbortConnection : ConnectionResult
 }

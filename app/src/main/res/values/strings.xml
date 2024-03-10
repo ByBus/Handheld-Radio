@@ -15,4 +15,7 @@
     <string name="send_message">Send message</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
+    <string name="timeout_exceeded">Timeout exceeded</string>
+    <string name="connection_aborted">Connection aborted</string>
+    <string name="please_try_again">Please try again after few seconds</string>
 </resources>

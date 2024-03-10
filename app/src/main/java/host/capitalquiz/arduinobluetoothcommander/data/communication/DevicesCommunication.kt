@@ -5,6 +5,7 @@ import host.capitalquiz.arduinobluetoothcommander.data.toDevice
 import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
 import host.capitalquiz.arduinobluetoothcommander.domain.BluetoothMessage
 import host.capitalquiz.arduinobluetoothcommander.domain.Communication
+import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionError
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
 import kotlinx.coroutines.CoroutineDispatcher
@@ -103,7 +104,7 @@ class DevicesCommunication @Inject constructor(
     }
 
     override fun close() {
-        _connectionState.tryEmit(ConnectionResult.Error("Connection aborted"))
+        _connectionState.tryEmit(ConnectionError.AbortConnection)
         scope?.cancel()
         scope = null
         connectionResultJob = null

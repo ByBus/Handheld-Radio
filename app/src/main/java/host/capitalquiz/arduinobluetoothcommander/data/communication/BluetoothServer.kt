@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
 import host.capitalquiz.arduinobluetoothcommander.data.toDevice
 import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
+import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionError
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -48,7 +49,7 @@ class BluetoothServer @Inject constructor(
         socket?.let { socket ->
             val device = socket.remoteDevice.toDevice()
             emit(ConnectionResult.Connect(device))
-        } ?: emit(ConnectionResult.Error("Timeout exceeded"))
+        } ?: emit(ConnectionError.Timeout)
     }.flowOn(dispatcher)
 
     override fun init() = Unit

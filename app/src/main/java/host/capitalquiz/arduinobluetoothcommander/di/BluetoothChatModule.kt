@@ -15,11 +15,11 @@ import host.capitalquiz.arduinobluetoothcommander.data.messages.MessagesDatabase
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.MessageMapper
 import host.capitalquiz.arduinobluetoothcommander.domain.MessagesRepository
-import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.ChatConnectionResultToUiMapper
 import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.ChatConnectionUi
 import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.CurrentTimeProvider
-import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.MessageToUiMapper
 import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.MessageUi
+import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.mappers.ChatConnectionResultToUiMapper
+import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.mappers.MessageToUiMapper
 
 @Module
 @InstallIn(ViewModelComponent::class)

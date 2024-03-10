@@ -29,6 +29,8 @@ import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult.*
 import host.capitalquiz.arduinobluetoothcommander.domain.DeviceMapper
 import host.capitalquiz.arduinobluetoothcommander.domain.DevicesRepository
 import host.capitalquiz.arduinobluetoothcommander.presentation.ConnectionResultUi
+import host.capitalquiz.arduinobluetoothcommander.presentation.ResourceProvider
+import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.ConnectionResultToUiMapper
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.DeviceUi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -69,6 +71,12 @@ interface BluetoothModule {
     @Binds
     fun bindDeviceNameProvider(impl: DeviceNameProvider.BluetoothName): DeviceNameProvider
 
+    @Binds
+    fun bindConnectionResultToUiMapper(impl: ConnectionResultToUiMapper): Mapper<ConnectionResultUi>
+
+    @Binds
+    fun bindStringResourceProvider(impl: ResourceProvider.StringProvider): ResourceProvider<String>
+
     companion object {
         @Singleton
         @Provides
@@ -85,30 +93,6 @@ interface BluetoothModule {
             val defaultName = context.resources.getString(R.string.default_device_name)
             return DeviceMapper { name, macAddress ->
                 DeviceUi(name ?: defaultName, macAddress)
-            }
-        }
-
-        @Provides
-        fun provideConnectionResultToUiMapper(@ApplicationContext context: Context): Mapper<ConnectionResultUi> {
-            return Mapper { result ->
-                when (result) {
-                    is Idle -> ConnectionResultUi.Idle
-                    is Connected -> ConnectionResultUi.ConnectionEstablished
-                    is Connect ->
-                        ConnectionResultUi.DeviceConnected(
-                            result.device,
-                            context.getString(R.string.connected)
-                        )
-
-                    is Disconnect ->
-                        ConnectionResultUi.DeviceDisconnected(
-                            result.device,
-                            context.getString(R.string.was_disconnected)
-                        )
-
-                    is Error -> ConnectionResultUi.Error(result.message)
-                    is Connecting -> ConnectionResultUi.Connecting(result.duration)
-                }
             }
         }
 

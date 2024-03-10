@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
+import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionError
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
 import kotlinx.coroutines.CoroutineDispatcher
@@ -65,7 +66,7 @@ class BluetoothClient @Inject constructor(
                         wasConnected = true
                     } catch (e: IOException) {
                         if (wasConnected.not())
-                            trySend(ConnectionResult.Error("Please try again after few seconds"))
+                            trySend(ConnectionError.SocketBusy)
                         close()
                     }
                 }
@@ -75,7 +76,7 @@ class BluetoothClient @Inject constructor(
             }
         }.timeout(timeoutMs.milliseconds).catch {
             if (socket?.isConnected != true && it is TimeoutCancellationException) {
-                emit(ConnectionResult.Error("Timeout exceeded"))
+                emit(ConnectionError.Timeout)
             }
         }.flowOn(dispatcher)
 
