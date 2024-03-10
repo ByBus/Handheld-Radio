@@ -8,13 +8,14 @@ import host.capitalquiz.arduinobluetoothcommander.data.toDevice
 import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
 
-private const val SERVER_CONNECTION_TIMEOUT_MS = 30_000
+
 @SuppressLint("MissingPermission")
 class BluetoothServer @Inject constructor(
     private val bluetoothManager: BluetoothManager?,
@@ -27,13 +28,17 @@ class BluetoothServer @Inject constructor(
 
     private val adapter get() = bluetoothManager?.adapter
 
-    override fun start(serverName: String, sdpRecord: UUID) = flow {
+    override fun start(
+        serverName: String,
+        sdpRecord: UUID,
+        timeoutMs: Int,
+    ): Flow<ConnectionResult> = flow {
         val serverSocket = adapter?.listenUsingRfcommWithServiceRecord(
             serverName,
             sdpRecord
         )
         socket = try {
-            serverSocket?.accept(SERVER_CONNECTION_TIMEOUT_MS)
+            serverSocket?.accept(timeoutMs)
         } catch (e: Exception) {
             emit(ConnectionResult.Error(e.message.toString()))
             null

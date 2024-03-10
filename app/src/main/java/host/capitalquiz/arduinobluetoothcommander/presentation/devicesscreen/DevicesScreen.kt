@@ -66,10 +66,8 @@ fun DevicesScreen(
         }
     }
 
-    LaunchedEffect(key1 = uiState) {
-        if (uiState.isConnected) {
-            uiState.deviceName(onNavigateToChat::invoke)
-        }
+    LaunchedEffect(key1 = uiState.isConnected) {
+        if (uiState.isConnected) uiState.deviceName(onNavigateToChat::invoke)
     }
 
     when {

@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
 interface Client : SocketHolder {
-    fun connect(device: Device, sdpRecord: UUID): Flow<ConnectionResult>
+    fun connect(device: Device, sdpRecord: UUID, timeoutMs: Int): Flow<ConnectionResult>
 }

@@ -12,7 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,15 +21,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 
 @Composable
-fun TimedProgressBar(duration: Long, modifier: Modifier = Modifier) {
+fun TimedProgressBar(duration: Int, modifier: Modifier = Modifier) {
     var oldValue by rememberSaveable { mutableFloatStateOf(1f) }
     var isRunning by rememberSaveable { mutableStateOf(false) }
 
     var currentProgress by remember { mutableFloatStateOf(if (isRunning) oldValue else 1f) }
     val updatedDuration by remember {
-        mutableLongStateOf(if (isRunning) (duration * oldValue).toLong() else duration)
+        mutableIntStateOf(if (isRunning) (duration * oldValue).roundToInt() else duration)
     }
 
     var currentHeight by remember { mutableStateOf(10.dp) }
@@ -37,7 +38,7 @@ fun TimedProgressBar(duration: Long, modifier: Modifier = Modifier) {
     val progressAnimation by animateFloatAsState(
         targetValue = currentProgress,
         animationSpec = tween(
-            durationMillis = updatedDuration.toInt(),
+            durationMillis = updatedDuration,
             easing = FastOutSlowInEasing
         ),
         label = "timed indicator progress",

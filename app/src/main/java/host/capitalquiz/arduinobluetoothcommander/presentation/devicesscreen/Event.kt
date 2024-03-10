@@ -9,7 +9,7 @@ sealed interface Event {
 
     data class Text(
         private val message: String,
-//        private val id: Long = System.currentTimeMillis(),
+        private val id: Long = System.currentTimeMillis(),
     ) : Event {
         private var consumed = false
         override fun consume(block: (String) -> Unit) {

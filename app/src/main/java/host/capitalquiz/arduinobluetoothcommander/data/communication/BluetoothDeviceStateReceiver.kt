@@ -68,5 +68,6 @@ class BluetoothDeviceStateReceiver @Inject constructor(
             context.unregisterReceiver(this)
             isRegistered = false
         }
+        listener = null
     }
 }

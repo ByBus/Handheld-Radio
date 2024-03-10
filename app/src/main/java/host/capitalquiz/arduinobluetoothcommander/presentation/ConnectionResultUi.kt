@@ -4,30 +4,35 @@ import host.capitalquiz.arduinobluetoothcommander.domain.Device
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.BluetoothUiState
 
 interface ConnectionResultUi {
-    fun reduce(bluetoothUiState: BluetoothUiState): BluetoothUiState
+    fun reduce(oldState: BluetoothUiState, toastConsumer: (String) -> Unit): BluetoothUiState
 
     abstract class Base : ConnectionResultUi {
         protected open val connected = false
         protected open val connecting = false
+        protected open val timeout = 0
+        protected open val message: String? = null
         protected open val device: Device? = null
-        protected open val timeout = 0L
-        protected open val errorMessage: String? = null
 
-        override fun reduce(bluetoothUiState: BluetoothUiState): BluetoothUiState =
-            bluetoothUiState.copy(
+        override fun reduce(
+            oldState: BluetoothUiState,
+            toastConsumer: (String) -> Unit,
+        ): BluetoothUiState =
+            oldState.copy(
                 isConnected = connected,
                 isConnecting = connecting,
-                toastMessage = errorMessage,
-                connectedDevice = device,
-                showProgressDuration = timeout
-            )
+                showProgressDuration = timeout,
+                device = device
+            ).also {
+                message?.let(toastConsumer::invoke)
+            }
+
     }
 
     object Idle : Base() {
-        override fun reduce(bluetoothUiState: BluetoothUiState) = bluetoothUiState
+        override fun reduce(oldState: BluetoothUiState, toastConsumer: (String) -> Unit) = oldState
     }
 
-    data class Connecting(override val timeout: Long) : Base() {
+    data class Connecting(override val timeout: Int) : Base() {
         override val connecting = true
     }
 
@@ -37,13 +42,13 @@ interface ConnectionResultUi {
 
     class DeviceConnected(override val device: Device, endMessage: String) : Base() {
         override val connected = true
-        override val errorMessage = "${device.deviceName} $endMessage"
+        override val message = "${device.deviceName} $endMessage"
     }
 
     class DeviceDisconnected(override val device: Device, endMessage: String) : Base() {
         override val connected = false
-        override val errorMessage = "${device.deviceName} $endMessage"
+        override val message = "${device.deviceName} $endMessage"
     }
 
-    class Error(override val errorMessage: String) : Base()
+    class Error(override val message: String) : Base()
 }

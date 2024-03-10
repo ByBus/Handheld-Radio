@@ -1,7 +1,6 @@
 package host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen
 
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
-import host.capitalquiz.arduinobluetoothcommander.presentation.ConnectionResultUi
 
 
 data class BluetoothUiState(
@@ -9,16 +8,10 @@ data class BluetoothUiState(
     val scannedDevices: List<DeviceUi> = emptyList(),
     val isConnected: Boolean = false,
     val isConnecting: Boolean = false,
-    val showProgressDuration: Long = 0L,
-    private val toastMessage: String? = null,
-    private val connectedDevice: Device? = null,
+    val showProgressDuration: Int = 0,
     val isDiscoveringDevices: Boolean = false,
+    private val device: Device? = null,
 ) {
-    operator fun plus(connectionResultUi: ConnectionResultUi): BluetoothUiState {
-        return connectionResultUi.reduce(this)
-    }
-
-    fun message(block: (String) -> Unit) = toastMessage?.let(block)
-
-    fun deviceName(block: (String) -> Unit) = connectedDevice?.deviceName?.let(block)
+    fun deviceName(nameConsumer: (deviceName: String) -> Unit) =
+        device?.deviceName?.let(nameConsumer)
 }

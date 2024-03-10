@@ -17,10 +17,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
+
+private const val SERVER_CONNECTION_TIMEOUT_MS = 30_000
+private const val CLIENT_CONNECTION_TIMEOUT_MS = 10_000
 
 class DevicesCommunication @Inject constructor(
     private val modeFactory: ConnectionModeFactory,
@@ -37,26 +41,28 @@ class DevicesCommunication @Inject constructor(
 
     override suspend fun startServer(serverName: String) {
         val server = modeFactory.createServer()
-        setMode(server, 30_000)
-        val connectionResult = server.start(serverName, commonDeviceUUID)
+        setMode(server, SERVER_CONNECTION_TIMEOUT_MS)
+        val connectionResult =
+            server.start(serverName, commonDeviceUUID, SERVER_CONNECTION_TIMEOUT_MS)
         updateConnectionResult(connectionResult)
     }
 
     override suspend fun connectToDevice(device: Device) {
         val client = modeFactory.createClient()
-        setMode(client, 10_000)
-        val connectionResult = client.connect(device, commonDeviceUUID)
+        setMode(client, CLIENT_CONNECTION_TIMEOUT_MS)
+        val connectionResult =
+            client.connect(device, commonDeviceUUID, CLIENT_CONNECTION_TIMEOUT_MS)
         updateConnectionResult(connectionResult)
     }
 
-    private fun setMode(socketHolder: SocketHolder, connectionDuration: Long) {
+    private fun setMode(socketHolder: SocketHolder, connectionDuration: Int) {
         _connectionState.tryEmit(ConnectionResult.Connecting(connectionDuration))
         currentMode.close()
         currentMode = socketHolder
     }
 
     private fun updateConnectionResult(connectionResult: Flow<ConnectionResult>) {
-        if (scope == null) scope = CoroutineScope(dispatcher)
+        if (scope?.isActive != true) scope = CoroutineScope(dispatcher)
         connectionResultJob?.cancel()
         connectionResultJob = scope?.launch {
             connectionResult.collect(_connectionState::tryEmit)

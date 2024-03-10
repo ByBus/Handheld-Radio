@@ -7,17 +7,20 @@ import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.timeout
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
-private const val CONNECTION_TIMEOUT_MS = 10_000L
 
 @SuppressLint("MissingPermission")
 class BluetoothClient @Inject constructor(
@@ -29,39 +32,49 @@ class BluetoothClient @Inject constructor(
     private val adapter get() = bluetoothManager?.adapter
     override var socket: BluetoothSocket? = null
 
-    override fun connect(device: Device, sdpRecord: UUID) = callbackFlow {
-        val listener = { result: ConnectionResult ->
-            trySend(result)
-            Unit
-        }
-        init()
-        withContext(dispatcher) {
-            adapter?.cancelDiscovery()
-            val btDevice = adapter?.getRemoteDevice(device.mac)
+    @OptIn(FlowPreview::class)
+    override fun connect(device: Device, sdpRecord: UUID, timeoutMs: Int): Flow<ConnectionResult> =
+        callbackFlow {
+            val listener = { result: ConnectionResult ->
+                trySend(result)
+                Unit
+            }
+            init()
+            withContext(dispatcher) {
+                adapter?.cancelDiscovery()
+                val btDevice = adapter?.getRemoteDevice(device.mac)
 
-            socket = btDevice
-                ?.createRfcommSocketToServiceRecord(sdpRecord)
+                socket = btDevice
+                    ?.createRfcommSocketToServiceRecord(sdpRecord)
 
-            launch {
-                delay(CONNECTION_TIMEOUT_MS)
-                if (socket?.isConnected != true) {
-                    trySend(ConnectionResult.Error("Timeout exceeded"))
-                    close()
+//            launch {
+//                Log.d("BluetoothClient", "connect: before timeout delay ${this@BluetoothClient}")
+//                delay(timeoutMs.toLong())
+//                Log.d("BluetoothClient", "connect: timeout  ${this@BluetoothClient}")
+//                if (socket?.isConnected != true) {
+//                    trySend(ConnectionResult.Error("Timeout exceeded"))
+//                    close()
+//                }
+//            }
+
+                socket?.let { clientSocket ->
+                    try {
+                        connectionWatcher.watchFor(device)
+                        connectionWatcher.listenForConnectionResult(listener)
+                        clientSocket.connect()
+                    } catch (e: IOException) {
+                        close()
+                    }
                 }
             }
-
-            socket?.let { clientSocket ->
-                try {
-                    connectionWatcher.watchFor(device)
-                    connectionWatcher.listenForConnectionResult(listener)
-                    clientSocket.connect()
-                } catch (e: IOException) {
-                    close()
-                }
+            awaitClose {
+                connectionWatcher.listenForConnectionResult(null)
             }
-        }
-        awaitClose { connectionWatcher.listenForConnectionResult(null) }
-    }.flowOn(dispatcher)
+        }.timeout(timeoutMs.milliseconds).catch {
+            if (socket?.isConnected != true && it is TimeoutCancellationException) {
+                emit(ConnectionResult.Error("Timeout exceeded"))
+            }
+        }.flowOn(dispatcher)
 
     override fun init() {
         connectionWatcher.init()
