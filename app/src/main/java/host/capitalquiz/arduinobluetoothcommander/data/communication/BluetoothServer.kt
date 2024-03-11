@@ -34,6 +34,7 @@ class BluetoothServer @Inject constructor(
         sdpRecord: UUID,
         timeoutMs: Int,
     ): Flow<ConnectionResult> = flow {
+        adapter?.cancelDiscovery()
         val serverSocket = adapter?.listenUsingRfcommWithServiceRecord(
             serverName,
             sdpRecord

@@ -3,6 +3,7 @@ package host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -74,8 +75,11 @@ fun DevicesScreen(
     BackHandler(enabled = uiState.isConnecting) {
         viewModel.disconnect()
     }
-    when {
-        uiState.isConnecting -> {
+    AnimatedContent(
+        targetState = uiState.isConnecting,
+        label = "Connecting or devices"
+    ) { isConnecting ->
+        if (isConnecting) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -89,9 +93,7 @@ fun DevicesScreen(
                         .fillMaxWidth()
                 )
             }
-        }
-
-        else -> {
+        } else {
             val visibilityDuration = integerResource(R.integer.bluetooth_visible_to_others_duration)
             DevicesList(
                 state = uiState,
