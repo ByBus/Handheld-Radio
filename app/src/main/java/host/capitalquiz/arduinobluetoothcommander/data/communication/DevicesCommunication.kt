@@ -5,7 +5,6 @@ import host.capitalquiz.arduinobluetoothcommander.data.toDevice
 import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
 import host.capitalquiz.arduinobluetoothcommander.domain.BluetoothMessage
 import host.capitalquiz.arduinobluetoothcommander.domain.Communication
-import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionError
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
 import kotlinx.coroutines.CoroutineDispatcher
@@ -18,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -104,7 +104,9 @@ class DevicesCommunication @Inject constructor(
     }
 
     override fun close() {
-        _connectionState.tryEmit(ConnectionError.AbortConnection)
+        _connectionState.update { connection ->
+            connection.abortErrorOrSelf()
+        }
         scope?.cancel()
         scope = null
         connectionResultJob = null

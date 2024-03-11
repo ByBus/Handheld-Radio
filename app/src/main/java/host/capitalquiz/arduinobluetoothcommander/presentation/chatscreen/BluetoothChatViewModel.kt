@@ -11,6 +11,7 @@ import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.Message
 import host.capitalquiz.arduinobluetoothcommander.domain.MessageMapper
 import host.capitalquiz.arduinobluetoothcommander.domain.MessagesRepository
+import host.capitalquiz.arduinobluetoothcommander.domain.mapItems
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -30,7 +31,7 @@ class BluetoothChatViewModel @AssistedInject constructor(
 
     val uiState = combine(
         messagesRepository.readMessages(macAddress, chatName)
-            .map { messages -> messages.map { it.map(messageMapper) } },
+            .map { messages -> messages.mapItems(messageMapper) },
         communication.connectionState.map { it.map(connectionResultMapper) }
     ) { messages, connectionState ->
         ChatUiState(chatName, messages, connectionState.isConnected())

@@ -30,7 +30,7 @@ class ConnectionResultToUiMapper @Inject constructor(
             is Error.Timeout -> ConnectionResultUi.Error(String(R.string.timeout_exceeded))
             is Error.AbortConnection -> ConnectionResultUi.Error(String(R.string.connection_aborted))
             is Error.SocketBusy -> ConnectionResultUi.Error(String(R.string.please_try_again))
-            is Result.Error -> ConnectionResultUi.Error(result.message)
+            is Error.Error -> ConnectionResultUi.Error(result.message)
         }
     }
 

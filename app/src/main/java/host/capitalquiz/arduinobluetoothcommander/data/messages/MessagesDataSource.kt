@@ -15,7 +15,7 @@ interface MessagesDataSource {
 
     suspend fun create(chat: Chat): Long
 
-    class Room @Inject constructor(val dao: MessagesDao) : MessagesDataSource {
+    class Room @Inject constructor(private val dao: MessagesDao) : MessagesDataSource {
 
         override fun getMessages(chatId: Long): Flow<List<Message>> {
             return dao.messages(chatId).map { dbMessages ->

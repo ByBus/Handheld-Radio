@@ -6,31 +6,28 @@ enum class Screens(vararg val arguments: String) {
         override fun destination(vararg values: String): String = ""
     },
     Chat("chatName", "macAddress") {
-        override val route = "bluetoothChat?${createDestination(arguments, arguments, true)}"
+        override val route = "bluetoothChat?${formatArgs(arguments, arguments, true)}"
         override fun destination(vararg values: String): String =
-            "bluetoothChat?${createDestination(arguments, values)}"
+            "bluetoothChat?${formatArgs(arguments, values)}"
     };
 
     fun argumentN(n: Int): String = arguments[n]
     abstract val route: String
     abstract fun destination(vararg values: String): String
 
-    fun createDestination(
+    protected fun formatArgs(
         names: Array<out String>,
         values: Array<out String>,
         route: Boolean = false,
-    ): String {
-        val sb = StringBuilder()
+    ): String = with(StringBuilder()) {
         names.zip(values) { name, value ->
-            with(sb) {
-                append(name).append("=")
-                if (route) append("{")
-                append(value)
-                if (route) append("}")
-                append("&")
-            }
+            append(name).append("=")
+            if (route) append("{")
+            append(value)
+            if (route) append("}")
+            append("&")
         }
-        sb.setLength(sb.length - 1)
-        return sb.toString()
+        setLength(length - 1)
+        this.toString()
     }
 }

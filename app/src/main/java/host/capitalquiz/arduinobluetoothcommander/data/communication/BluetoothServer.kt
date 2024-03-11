@@ -41,7 +41,7 @@ class BluetoothServer @Inject constructor(
         socket = try {
             serverSocket?.accept(timeoutMs)
         } catch (e: Exception) {
-            emit(ConnectionResult.Error(e.message.toString()))
+            emit(ConnectionError.Error(e.message.toString()))
             null
         } finally {
             closeServerSocket()

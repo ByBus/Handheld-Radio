@@ -12,3 +12,5 @@ data class Message(
         return mapper(id, name, text, date, chatId, fromMe)
     }
 }
+
+fun <R> List<Message>.mapItems(mapper: MessageMapper<R>): List<R> = this.map { it.map(mapper) }
