@@ -11,13 +11,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -26,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -77,22 +81,45 @@ fun DevicesList(
                 label = "Discovering devices buttons",
             ) { isDiscoveringDevices ->
                 if (isDiscoveringDevices) {
-                    Button(
-                        onClick = onStopSearch,
-                        colors = ButtonDefaults.buttonColors(containerColor = RedColor)
-                    ) {
-                        Text(text = stringResource(R.string.stop_scan))
-                    }
+                    IconButton(
+                        text = stringResource(R.string.stop_scan),
+                        iconPainter = painterResource(R.drawable.round_bluetooth_disabled_24),
+                        colors = ButtonDefaults.buttonColors(containerColor = RedColor),
+                        onClick = onStopSearch
+                    )
                 } else {
-                    Button(onClick = onStartSearch) {
-                        Text(text = stringResource(R.string.start_scan))
-                    }
+                    IconButton(
+                        text = stringResource(R.string.start_scan),
+                        iconPainter = painterResource(R.drawable.round_bluetooth_searching_24),
+                        onClick = onStartSearch
+                    )
                 }
             }
-            Button(onClick = onStartServer) {
-                Text(text = stringResource(R.string.start_server))
-            }
+            IconButton(
+                text = stringResource(R.string.start_server),
+                iconPainter = painterResource(R.drawable.round_chat_24),
+                onClick = onStartServer
+            )
         }
+    }
+}
+
+@Composable
+private fun IconButton(
+    text: String,
+    iconPainter: Painter,
+    modifier: Modifier = Modifier,
+    colors: ButtonColors = ButtonDefaults.buttonColors(),
+    onClick: () -> Unit,
+) {
+    Button(onClick = onClick, colors = colors, modifier = modifier) {
+        Icon(
+            painter = iconPainter,
+            contentDescription = text,
+            modifier = Modifier.size(28.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = text)
     }
 }
 
