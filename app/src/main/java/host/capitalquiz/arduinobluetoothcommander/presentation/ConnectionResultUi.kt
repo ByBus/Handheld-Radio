@@ -16,15 +16,15 @@ interface ConnectionResultUi {
         override fun reduce(
             oldState: BluetoothUiState,
             toastConsumer: (String) -> Unit,
-        ): BluetoothUiState =
-            oldState.copy(
-                isConnected = connected,
-                isConnecting = connecting,
-                showProgressDuration = timeout,
-                device = device
-            ).also {
-                message?.let(toastConsumer::invoke)
-            }
+        ): BluetoothUiState = oldState.copy(
+            isConnected = connected,
+            isConnecting = connecting,
+            showProgressDuration = timeout,
+            device = device,
+            isDiscoveringDevices = false
+        ).also {
+            message?.let(toastConsumer::invoke)
+        }
 
     }
 
