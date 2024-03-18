@@ -6,8 +6,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 
-class EnableBluetoothContract : ActivityResultContract<Any, Boolean>() {
-    override fun createIntent(context: Context, input: Any): Intent {
+class EnableBluetoothContract : ActivityResultContract<Unit, Boolean>() {
+    override fun createIntent(context: Context, input: Unit): Intent {
         return Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
     }
 

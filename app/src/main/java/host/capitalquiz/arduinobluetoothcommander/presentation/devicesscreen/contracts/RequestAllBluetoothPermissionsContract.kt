@@ -6,13 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.Companion.ACTION_REQUEST_PERMISSIONS
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.Companion.EXTRA_PERMISSIONS
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.Companion.EXTRA_PERMISSION_GRANT_RESULTS
 
-class RequestAllBluetoothPermissionsContract : ActivityResultContract<Any, Boolean>() {
+class RequestAllBluetoothPermissionsContract : ActivityResultContract<Unit, Boolean>() {
     private val permissions =
         arrayOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -24,7 +23,7 @@ class RequestAllBluetoothPermissionsContract : ActivityResultContract<Any, Boole
             )
         } else emptyArray()
 
-    override fun createIntent(context: Context, input: Any): Intent {
+    override fun createIntent(context: Context, input: Unit): Intent {
         return Intent(ACTION_REQUEST_PERMISSIONS)
             .putExtra(EXTRA_PERMISSIONS, permissions)
     }
@@ -32,10 +31,6 @@ class RequestAllBluetoothPermissionsContract : ActivityResultContract<Any, Boole
     override fun parseResult(resultCode: Int, intent: Intent?): Boolean {
         if (resultCode != Activity.RESULT_OK || intent == null) return false
         val grantResults = intent.getIntArrayExtra(EXTRA_PERMISSION_GRANT_RESULTS)
-        Log.d(
-            "RequestAllPermissions",
-            "parseResult: ${grantResults?.map { it == PackageManager.PERMISSION_GRANTED }}"
-        )
         return grantResults?.all { it == PackageManager.PERMISSION_GRANTED } == true
     }
 }

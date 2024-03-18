@@ -1,7 +1,7 @@
 package host.capitalquiz.arduinobluetoothcommander.presentation.navigation
 
 enum class Screens(vararg val arguments: String) {
-    Devices {
+    BluetoothDevices {
         override val route = "devices"
         override fun destination(vararg values: String): String = ""
     },
@@ -9,6 +9,10 @@ enum class Screens(vararg val arguments: String) {
         override val route = "bluetoothChat?${formatArgs(arguments, arguments, true)}"
         override fun destination(vararg values: String): String =
             "bluetoothChat?${formatArgs(arguments, values)}"
+    },
+    RadioSet {
+        override val route = "radioSet"
+        override fun destination(vararg values: String): String = ""
     };
 
     fun argumentN(n: Int): String = arguments[n]

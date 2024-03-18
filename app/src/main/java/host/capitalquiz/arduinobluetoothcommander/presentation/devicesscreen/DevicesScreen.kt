@@ -3,6 +3,7 @@ package host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.launch
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,7 +27,6 @@ import host.capitalquiz.arduinobluetoothcommander.R
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.contracts.EnableBluetoothContract
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.contracts.MakeDiscoverableOverBluetoothContract
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.contracts.RequestAllBluetoothPermissionsContract
-import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.contracts.launch
 import host.capitalquiz.arduinobluetoothcommander.ui.components.TimedProgressBar
 
 @Composable

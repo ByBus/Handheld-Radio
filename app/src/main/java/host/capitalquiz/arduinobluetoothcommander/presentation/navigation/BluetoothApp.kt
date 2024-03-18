@@ -3,6 +3,7 @@ package host.capitalquiz.arduinobluetoothcommander.presentation.navigation
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,16 +11,17 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.BluetoothChatScreen
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.DevicesScreen
+import host.capitalquiz.wifiradioset.presentation.WiFiRadioSetScreen
 
 @Composable
 fun BluetoothApp(navController: NavHostController = rememberNavController()) {
     NavHost(
         navController = navController,
-        startDestination = Screens.Devices.route,
+        startDestination = Screens.RadioSet.route,
         modifier = Modifier
             .fillMaxSize()
     ) {
-        composable(route = Screens.Devices.route) {
+        composable(route = Screens.BluetoothDevices.route) {
             DevicesScreen(
                 onNavigateToChat = { deviceName, mac ->
                     navController.navigate(Screens.Chat.destination(deviceName, mac))
@@ -41,6 +43,11 @@ fun BluetoothApp(navController: NavHostController = rememberNavController()) {
                 deviceMac = macAddress,
                 onDisconnect = navController::popBackStack
             )
+        }
+        composable(
+            route = Screens.RadioSet.route
+        ) {
+            WiFiRadioSetScreen(viewModel = hiltViewModel(), onBack = navController::popBackStack)
         }
     }
 }
