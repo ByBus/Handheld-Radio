@@ -9,13 +9,18 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import dagger.hilt.android.scopes.ViewModelScoped
 import host.capitalquiz.wifiradioset.data.ConnectionManager
 import host.capitalquiz.wifiradioset.data.NetworkChecker
 import host.capitalquiz.wifiradioset.data.WifiConnectionManager
 import host.capitalquiz.wifiradioset.data.WifiRadioSetRepository
+import host.capitalquiz.wifiradioset.data.communication.RadioSetModeFactory
+import host.capitalquiz.wifiradioset.data.communication.WiFiCommunication
+import host.capitalquiz.wifiradioset.domain.RadioSetCommunication
 import host.capitalquiz.wifiradioset.domain.RadioSetRepository
 
 @Module
@@ -31,6 +36,7 @@ interface WiFIModule {
     @Binds
     fun bindWifiConnectionManager(impl: WifiConnectionManager): ConnectionManager
 
+
     companion object {
         @Provides
         @ViewModelScoped
@@ -45,4 +51,16 @@ interface WiFIModule {
         fun provideConnectivityManager(@ApplicationContext context: Context): ConnectivityManager =
             context.getSystemService()!!
     }
+}
+
+@Module
+@InstallIn(ActivityRetainedComponent::class)
+interface WiFiSingletonsModule {
+
+    @Binds
+    fun bindWiFiModeFactory(impl: RadioSetModeFactory.Wifi): RadioSetModeFactory
+
+    @Binds
+    @ActivityRetainedScoped
+    fun bindWiFiCommunication(impl: WiFiCommunication): RadioSetCommunication
 }

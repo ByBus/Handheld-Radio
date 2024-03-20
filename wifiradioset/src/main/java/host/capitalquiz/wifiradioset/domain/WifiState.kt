@@ -6,4 +6,5 @@ sealed interface WifiState {
     object Off : WifiState
     data class DevicesFound(val wifiDevices: List<WifiDevice>)
     object ConnectionFailed : WifiState
+    object Connected : WifiState
 }
