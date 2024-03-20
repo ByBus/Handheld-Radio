@@ -6,10 +6,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
 import host.capitalquiz.arduinobluetoothcommander.data.toDevice
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
+import host.capitalquiz.common.getExtra
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -25,11 +25,7 @@ class FoundDevicesReceiver @Inject constructor(
     private var isRegistered = false
 
     override fun onReceive(context: Context, intent: Intent) {
-        val device = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
-        } else {
-            intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-        }
+        val device = intent.getExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
         device?.let { bluetoothDevice ->
             _foundDevices.update { old ->
                 val new = bluetoothDevice.toDevice()

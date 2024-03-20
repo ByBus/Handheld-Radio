@@ -9,11 +9,11 @@ import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
-import android.os.Build
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import dagger.hilt.android.qualifiers.ApplicationContext
+import host.capitalquiz.common.getExtra
 import host.capitalquiz.wifiradioset.domain.RadioSetCommunication
 import host.capitalquiz.wifiradioset.domain.WifiDevice
 import host.capitalquiz.wifiradioset.domain.WifiState
@@ -49,14 +49,7 @@ class WifiConnectionManager @Inject constructor(
 
             WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
                 val isConnected = p2pConnectionChecker.isConnected()
-                val networkInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    intent.getParcelableExtra(
-                        WifiP2pManager.EXTRA_NETWORK_INFO,
-                        NetworkInfo::class.java
-                    )
-                } else {
-                    intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO)
-                }
+                val networkInfo = intent.getExtra<NetworkInfo>(WifiP2pManager.EXTRA_NETWORK_INFO)
                 Log.d(
                     "WifiConnectionManager",
                     "onReceive: CONNECTION_CHANGED_ACTION isConnected=$networkInfo isConnectedWithConnMan=$isConnected"
@@ -76,9 +69,7 @@ class WifiConnectionManager @Inject constructor(
             }
 
             WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION -> {
-                val device = intent.getParcelableExtra(
-                    WifiP2pManager.EXTRA_WIFI_P2P_DEVICE
-                ) as? WifiP2pDevice
+                val device = intent.getExtra<WifiP2pDevice>(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE)
                 device?.let {
                     Log.d(
                         "WifiConnectionManager",

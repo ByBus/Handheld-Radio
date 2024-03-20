@@ -51,6 +51,7 @@ android {
 
 dependencies {
 
+    implementation(project(":common"))
     implementation(platform(libs.compose.bom))
     implementation(libs.bundles.composeDependencies)
     implementation(libs.androidx.core.ktx)

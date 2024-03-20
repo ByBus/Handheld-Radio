@@ -2,11 +2,11 @@ package host.capitalquiz.arduinobluetoothcommander.data.communication
 
 import android.annotation.SuppressLint
 import host.capitalquiz.arduinobluetoothcommander.data.toDevice
-import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
 import host.capitalquiz.arduinobluetoothcommander.domain.BluetoothMessage
 import host.capitalquiz.arduinobluetoothcommander.domain.Communication
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
+import host.capitalquiz.common.di.DispatcherIO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

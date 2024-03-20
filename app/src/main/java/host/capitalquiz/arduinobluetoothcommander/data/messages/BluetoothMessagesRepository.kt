@@ -2,11 +2,11 @@ package host.capitalquiz.arduinobluetoothcommander.data.messages
 
 import host.capitalquiz.arduinobluetoothcommander.data.devices.DeviceNameProvider
 import host.capitalquiz.arduinobluetoothcommander.data.toBluetoothMessage
-import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
 import host.capitalquiz.arduinobluetoothcommander.domain.Chat
 import host.capitalquiz.arduinobluetoothcommander.domain.Communication
 import host.capitalquiz.arduinobluetoothcommander.domain.Message
 import host.capitalquiz.arduinobluetoothcommander.domain.MessagesRepository
+import host.capitalquiz.common.di.DispatcherIO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

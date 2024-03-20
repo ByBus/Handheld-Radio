@@ -32,6 +32,7 @@ import host.capitalquiz.arduinobluetoothcommander.presentation.ConnectionResultU
 import host.capitalquiz.arduinobluetoothcommander.presentation.ResourceProvider
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.ConnectionResultToUiMapper
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.DeviceUi
+import host.capitalquiz.common.di.DispatcherIO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton

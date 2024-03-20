@@ -7,10 +7,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
+import host.capitalquiz.common.getExtra
 import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
@@ -22,11 +22,7 @@ class BluetoothDeviceStateReceiver @Inject constructor(
     private var listener: ((ConnectionResult) -> Unit)? = null
 
     override fun onReceive(context: Context, intent: Intent) {
-        val device = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice::class.java)
-        } else {
-            intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-        }
+        val device = intent.getExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
         if (currentWatchingDevice.mac != device?.address) return
 
         when (intent.action) {
@@ -34,7 +30,6 @@ class BluetoothDeviceStateReceiver @Inject constructor(
             BluetoothDevice.ACTION_ACL_DISCONNECTED -> ConnectionResult.Disconnect(
                 currentWatchingDevice
             )
-
             else -> return
         }.let { event ->
             listener?.invoke(event)

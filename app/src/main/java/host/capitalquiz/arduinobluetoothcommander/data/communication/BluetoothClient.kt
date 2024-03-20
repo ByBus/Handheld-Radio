@@ -3,10 +3,10 @@ package host.capitalquiz.arduinobluetoothcommander.data.communication
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
-import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionError
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult
 import host.capitalquiz.arduinobluetoothcommander.domain.Device
+import host.capitalquiz.common.di.DispatcherIO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.TimeoutCancellationException

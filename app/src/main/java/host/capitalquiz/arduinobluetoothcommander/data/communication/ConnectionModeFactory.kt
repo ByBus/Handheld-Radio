@@ -1,7 +1,7 @@
 package host.capitalquiz.arduinobluetoothcommander.data.communication
 
 import android.bluetooth.BluetoothManager
-import host.capitalquiz.arduinobluetoothcommander.di.DispatcherIO
+import host.capitalquiz.common.di.DispatcherIO
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
