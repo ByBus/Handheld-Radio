@@ -1,18 +1,11 @@
 package host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.contracts
 
 import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
-import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.Companion.ACTION_REQUEST_PERMISSIONS
-import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.Companion.EXTRA_PERMISSIONS
-import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.Companion.EXTRA_PERMISSION_GRANT_RESULTS
+import host.capitalquiz.common.presentation.contracts.MultiplePermissionsContract
 
-class RequestAllBluetoothPermissionsContract : ActivityResultContract<Unit, Boolean>() {
-    private val permissions =
+class RequestAllBluetoothPermissionsContract : MultiplePermissionsContract() {
+    override val permissions =
         arrayOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -22,15 +15,4 @@ class RequestAllBluetoothPermissionsContract : ActivityResultContract<Unit, Bool
                 Manifest.permission.BLUETOOTH_CONNECT
             )
         } else emptyArray()
-
-    override fun createIntent(context: Context, input: Unit): Intent {
-        return Intent(ACTION_REQUEST_PERMISSIONS)
-            .putExtra(EXTRA_PERMISSIONS, permissions)
-    }
-
-    override fun parseResult(resultCode: Int, intent: Intent?): Boolean {
-        if (resultCode != Activity.RESULT_OK || intent == null) return false
-        val grantResults = intent.getIntArrayExtra(EXTRA_PERMISSION_GRANT_RESULTS)
-        return grantResults?.all { it == PackageManager.PERMISSION_GRANTED } == true
-    }
 }
