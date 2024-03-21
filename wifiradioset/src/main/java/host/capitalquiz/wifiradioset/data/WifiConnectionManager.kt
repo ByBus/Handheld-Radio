@@ -9,6 +9,7 @@ import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
+import android.net.wifi.p2p.WifiP2pManager.ActionListener
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+
 
 class WifiConnectionManager @Inject constructor(
     private val wifiManager: WifiP2pManager,
@@ -112,8 +114,24 @@ class WifiConnectionManager @Inject constructor(
             context.unregisterReceiver(this)
             isRegistered = false
         }
+        disconnect()
     }
 
+    private fun disconnect() {
+        if (channel != null) {
+            wifiManager.requestGroupInfo(channel) { group ->
+                if (group != null) {
+                    wifiManager.removeGroup(channel, object : ActionListener {
+                        override fun onSuccess() {
+                            _wifiState.update { WifiState.Disconnected }
+                        }
+
+                        override fun onFailure(reason: Int) {}
+                    })
+                }
+            }
+        }
+    }
     override fun connect(device: WifiDevice) {
         connectingDevice = device
         val config = WifiP2pConfig().apply {
@@ -139,10 +157,6 @@ class WifiConnectionManager @Inject constructor(
 
     override fun stopDiscoverDevices() {
         wifiManager.stopPeerDiscovery(channel, WifiDevicesDiscoveryListener())
-    }
-
-    fun interface Listener {
-        fun onStateChanged(state: WifiState)
     }
 
     private val peerListListener = WifiP2pManager.PeerListListener { peerList ->

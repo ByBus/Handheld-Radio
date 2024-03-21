@@ -2,6 +2,7 @@ package host.capitalquiz.wifiradioset.presentation.conversation
 
 import host.capitalquiz.common.presentation.ResourceProvider
 import host.capitalquiz.wifiradioset.R
+
 import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
 import javax.inject.Inject
 
@@ -12,11 +13,11 @@ class WiFiConnectionUiResultMapper @Inject constructor(
         return when (result) {
             WiFiConnectionResult.Abort -> WiFiConnectionUiResult.Abort(String(R.string.connection_was_aborted))
             is WiFiConnectionResult.Connect -> WiFiConnectionUiResult.Connect(
-                "${result.device.name} ${String(R.string.was_connected)}"
+                "${result.device.name} ${String(R.string.client_was_connected)}"
             )
 
             is WiFiConnectionResult.Disconnect -> WiFiConnectionUiResult.Connect(
-                "${result.device.name} ${String(R.string.was_disconnected)}"
+                "${result.device.name} ${String(R.string.client_was_disconnected)}"
             )
 
             is WiFiConnectionResult.Error -> WiFiConnectionUiResult.Error(result.message)

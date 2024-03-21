@@ -4,8 +4,8 @@
     <string name="connection_was_rejected">Connection was rejected</string>
     <string name="device_was_disconnected">Device was disconnected</string>
     <string name="connection_was_aborted">Connection was aborted</string>
-    <string name="was_connected">" was connected"</string>
-    <string name="was_disconnected">" was disconnected"</string>
+    <string name="client_was_connected">"was connected"</string>
+    <string name="client_was_disconnected">"was disconnected"</string>
     <string name="wifi_label">WiFi</string>
     <string name="location_label">Location</string>
     <string name="please_enable_wifi_and_location">Please enable %1$s to be able to connect to other devices\nTo be able to find devices, please enable %2$s</string>
