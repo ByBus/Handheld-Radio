@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "host.capitalquiz.wifiradioset"
+    namespace = "host.capitalquiz.common"
     compileSdk = 34
 
     defaultConfig {
