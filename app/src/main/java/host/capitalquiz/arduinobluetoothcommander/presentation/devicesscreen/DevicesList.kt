@@ -22,7 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,15 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import host.capitalquiz.arduinobluetoothcommander.R
 import host.capitalquiz.arduinobluetoothcommander.ui.theme.RedColor
-import host.capitalquiz.arduinobluetoothcommander.ui.theme.SemiGray
-import host.capitalquiz.arduinobluetoothcommander.ui.theme.adventProFamily
+import host.capitalquiz.common.ui.components.DevicesListTitle
 
 @Composable
 fun DevicesList(
@@ -144,21 +140,6 @@ fun DevicesList(
             DeviceItem(device = foundDevice, onClickDevice = onClickDevice)
         }
     }
-}
-
-@Composable
-private fun DevicesListTitle(title: String) {
-    Column {
-        Text(
-            text = title,
-            fontWeight = FontWeight.Medium,
-            fontSize = 26.sp,
-            modifier = Modifier.padding(16.dp),
-            fontFamily = adventProFamily
-        )
-        Divider(thickness = Dp.Hairline, color = SemiGray, modifier = Modifier.padding(2.dp))
-    }
-
 }
 
 @Preview(backgroundColor = 0xFFFFFFL, showBackground = true)

@@ -14,33 +14,42 @@ import android.util.Log
 import android.widget.Toast
 import dagger.hilt.android.qualifiers.ApplicationContext
 import host.capitalquiz.common.getExtra
-import host.capitalquiz.wifiradioset.domain.RadioSetCommunication
+import host.capitalquiz.wifiradioset.domain.CommunicationMode
 import host.capitalquiz.wifiradioset.domain.WifiDevice
 import host.capitalquiz.wifiradioset.domain.WifiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class WifiConnectionManager @Inject constructor(
     private val wifiManager: WifiP2pManager,
     @ApplicationContext private val context: Context,
     private val p2pConnectionChecker: NetworkChecker,
-    private val communication: RadioSetCommunication,
+    private val communication: CommunicationMode,
 ) : BroadcastReceiver(), ConnectionManager {
     private var isRegistered = false
     private val channel = wifiManager.initialize(context, Looper.getMainLooper(), null)
-    private var listener: Listener? = null
-    private val foundDevices = MutableStateFlow<List<WifiDevice>>(emptyList())
-    override val devices = foundDevices.asStateFlow()
+    private val _wifiState = MutableStateFlow<WifiState>(WifiState.Idle)
+    override val wifiState = _wifiState.asStateFlow()
     private var connectingDevice: WifiDevice? = null
+    private var wifiEnabled = false
+    private var wasConnected = false
+    private var devices = listOf<WifiDevice>()
+
+    init {
+        Log.d("WifiConnectionManager", "communication in connMan: $communication")
+    }
 
     override fun onReceive(context: Context?, intent: Intent) {
         Log.d("WifiConnectionManager", "onReceive: ${intent.action}")
         when (intent.action) {
             WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION -> {
                 val state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1)
-                val isWifiDirectEnabled = state == WifiP2pManager.WIFI_P2P_STATE_ENABLED
-                listener?.onStateChanged(if (isWifiDirectEnabled) WifiState.On else WifiState.Off)
+                wifiEnabled = state == WifiP2pManager.WIFI_P2P_STATE_ENABLED
+                _wifiState.update {
+                    if (wifiEnabled) WifiState.On else WifiState.Off
+                }
             }
 
             WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> {
@@ -54,9 +63,7 @@ class WifiConnectionManager @Inject constructor(
                     "WifiConnectionManager",
                     "onReceive: CONNECTION_CHANGED_ACTION isConnected=$networkInfo isConnectedWithConnMan=$isConnected"
                 )
-                val device = intent.getParcelableExtra(
-                    WifiP2pManager.EXTRA_WIFI_P2P_DEVICE
-                ) as? WifiP2pDevice
+                val device = intent.getExtra<WifiP2pDevice>(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE)
                 device?.let {
                     Log.d(
                         "WifiConnectionManager",
@@ -64,7 +71,13 @@ class WifiConnectionManager @Inject constructor(
                     )
                 }
                 if (networkInfo?.isConnected == true) {
+                    wasConnected = true
                     wifiManager.requestConnectionInfo(channel, connectionListener)
+                } else {
+                    if (wifiEnabled && wasConnected) {
+                        _wifiState.update { WifiState.Disconnected }
+                        wasConnected = false
+                    }
                 }
             }
 
@@ -115,7 +128,7 @@ class WifiConnectionManager @Inject constructor(
 
             override fun onFailure(reason: Int) {
                 connectingDevice = null
-                listener?.onStateChanged(WifiState.ConnectionFailed)
+                _wifiState.update { WifiState.ConnectionFailed }
             }
         })
     }
@@ -128,17 +141,13 @@ class WifiConnectionManager @Inject constructor(
         wifiManager.stopPeerDiscovery(channel, WifiDevicesDiscoveryListener())
     }
 
-    override fun setListener(listener: Listener) {
-        this.listener = listener
-    }
-
     fun interface Listener {
         fun onStateChanged(state: WifiState)
     }
 
     private val peerListListener = WifiP2pManager.PeerListListener { peerList ->
-        val refreshedPeers = peerList.deviceList
-        foundDevices.value = refreshedPeers.map { it.toWifiDevice() }
+        devices = peerList.deviceList.map { it.toWifiDevice() }
+        _wifiState.update { WifiState.DevicesFound(devices) }
     }
 
     private val connectionListener = WifiP2pManager.ConnectionInfoListener { info ->
@@ -149,20 +158,20 @@ class WifiConnectionManager @Inject constructor(
         if (info.groupFormed && info.isGroupOwner) { //Server
             Toast.makeText(context, "Server", Toast.LENGTH_SHORT).show()
             Log.d("WifiConnectionManager", "SERVER")
-            communication.startServer(connectingDevice ?: WifiDevice("Client", ""))
+            communication.configureAsServer(connectingDevice ?: WifiDevice("Client", ""))
             // Do whatever tasks are specific to the group owner.
             // One common case is creating a group owner thread and accepting
             // incoming connections.
         } else if (info.groupFormed) { // Client
             Toast.makeText(context, "Client", Toast.LENGTH_SHORT).show()
-            Log.d("WifiConnectionManager1", "CLIENT devices=${devices.value}")
+            Log.d("WifiConnectionManager1", "CLIENT devices=${devices}")
             Log.d("WifiConnectionManager1", "CLIENT hostName=${groupOwnerAddress}")
 //            Log.d("WifiConnectionManager1", "CLIENT hostName=${groupOwnerAddress.hostName}")
             Log.d("WifiConnectionManager1", "CLIENT address=${groupOwnerAddress.address}")
 //            Log.d("WifiConnectionManager1", "CLIENT canonicalHostName=${groupOwnerAddress.canonicalHostName}")
             Log.d("WifiConnectionManager1", "CLIENT hostAddress=${groupOwnerAddress.hostAddress}")
 
-            communication.startClient(
+            communication.configureAsClient(
                 connectingDevice ?: WifiDevice(
                     "Server",
                     groupOwnerAddress.hostAddress.takeOrEmpty()
@@ -172,7 +181,7 @@ class WifiConnectionManager @Inject constructor(
             // you'll want to create a peer thread that connects
             // to the group owner.
         }
-        listener?.onStateChanged(WifiState.Connected)
+        _wifiState.update { WifiState.Connected }
     }
 }
 

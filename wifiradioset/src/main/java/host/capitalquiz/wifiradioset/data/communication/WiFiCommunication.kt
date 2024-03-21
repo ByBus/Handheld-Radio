@@ -1,8 +1,10 @@
 package host.capitalquiz.wifiradioset.data.communication
 
+import host.capitalquiz.common.di.DispatcherIO
 import host.capitalquiz.wifiradioset.domain.RadioSetCommunication
 import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
 import host.capitalquiz.wifiradioset.domain.WifiDevice
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,10 +20,13 @@ import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import javax.inject.Inject
 
+
 private const val PORT = 8888
 
 class WiFiCommunication @Inject constructor(
     private val modeFactory: RadioSetModeFactory,
+    @DispatcherIO
+    private val dispatcher: CoroutineDispatcher,
 ) : RadioSetCommunication {
     private var connectionResultJob: Job? = null
     private var scope: CoroutineScope? = null
@@ -30,25 +35,22 @@ class WiFiCommunication @Inject constructor(
         MutableStateFlow<WiFiConnectionResult>(WiFiConnectionResult.Idle)
     override val connectionResult = _connectionResult.asStateFlow()
 
-    override fun startServer(connectedDevice: WifiDevice) {
+    override fun configureAsServer(connectedDevice: WifiDevice) {
         socketHolder.close()
-        val server = modeFactory.server(connectedDevice, PORT)
-        socketHolder = server
-        updateConnectionResult(server.connect())
+        socketHolder = modeFactory.server(connectedDevice, PORT)
     }
 
-    override fun startClient(connectedDevice: WifiDevice, address: InetAddress) {
+    override fun configureAsClient(connectedDevice: WifiDevice, address: InetAddress) {
         socketHolder.close()
-        val client = modeFactory.client(connectedDevice, address, PORT)
-        socketHolder = client
-        updateConnectionResult(client.connect())
+        socketHolder = modeFactory.client(connectedDevice, address, PORT)
     }
 
-    private fun updateConnectionResult(result: Flow<WiFiConnectionResult>) {
+    override fun connect() {
+        val connectionResultFlow = socketHolder.connect()
         if (scope == null) scope = CoroutineScope(Dispatchers.Main)
         connectionResultJob?.cancel()
         connectionResultJob = scope?.launch {
-            result.collect(_connectionResult::tryEmit)
+            connectionResultFlow.collect(_connectionResult::tryEmit)
         }
     }
 
@@ -67,18 +69,20 @@ class WiFiCommunication @Inject constructor(
     override fun receive(): Flow<String> {
         return flow {
             delay(2000)
-            if (socketHolder.socket()?.isConnected != true) return@flow
+            val socket = socketHolder.socket()
+            if (socket?.isConnected != true) return@flow
             val buffer = ByteArray(1024)
-            val inputStream = socketHolder.socket()!!.inputStream
-            while (true) {
-                try {
-                    inputStream.read(buffer)
-                } catch (e: Exception) {
-                    break
+            val inputStream = socket.inputStream
+            var read: Int
+            try {
+                while (inputStream.read(buffer).also { read = it } != -1) {
+                    if (read > 0) emit(buffer.decodeToString())
                 }
-                emit(buffer.decodeToString())
+            } catch (_: Exception) {
+            } finally {
+                stop()
             }
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(dispatcher)
     }
 
     override fun stop() {

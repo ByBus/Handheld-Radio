@@ -29,7 +29,6 @@ import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult.*
 import host.capitalquiz.arduinobluetoothcommander.domain.DeviceMapper
 import host.capitalquiz.arduinobluetoothcommander.domain.DevicesRepository
 import host.capitalquiz.arduinobluetoothcommander.presentation.ConnectionResultUi
-import host.capitalquiz.arduinobluetoothcommander.presentation.ResourceProvider
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.ConnectionResultToUiMapper
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.DeviceUi
 import host.capitalquiz.common.di.DispatcherIO
@@ -75,8 +74,6 @@ interface BluetoothModule {
     @Binds
     fun bindConnectionResultToUiMapper(impl: ConnectionResultToUiMapper): Mapper<ConnectionResultUi>
 
-    @Binds
-    fun bindStringResourceProvider(impl: ResourceProvider.StringProvider): ResourceProvider<String>
 
     companion object {
         @Singleton

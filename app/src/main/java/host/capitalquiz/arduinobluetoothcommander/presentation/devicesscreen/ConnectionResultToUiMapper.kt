@@ -2,7 +2,7 @@ package host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen
 
 import host.capitalquiz.arduinobluetoothcommander.R
 import host.capitalquiz.arduinobluetoothcommander.presentation.ConnectionResultUi
-import host.capitalquiz.arduinobluetoothcommander.presentation.ResourceProvider
+import host.capitalquiz.common.presentation.ResourceProvider
 import javax.inject.Inject
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionError as Error
 import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult as Result

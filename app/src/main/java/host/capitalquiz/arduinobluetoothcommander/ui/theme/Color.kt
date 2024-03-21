@@ -13,6 +13,5 @@ val Pink40 = Color(0xFF7D5260)
 val LightGreen = Color(0xFF81C784)
 val DarkerGreen = Color(0xFF4DB6AC)
 val SemiWhite = Color(0xBCFFFFFF)
-val SemiGray = Color(0x524E4E4E)
 
 val RedColor = Color(0xFFF44336)

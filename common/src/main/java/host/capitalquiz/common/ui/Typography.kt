@@ -1,9 +1,9 @@
-package host.capitalquiz.arduinobluetoothcommander.ui.theme
+package host.capitalquiz.common.ui
 
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import host.capitalquiz.arduinobluetoothcommander.R
+import host.capitalquiz.wifiradioset.R
 
 val adventProFamily = FontFamily(
     Font(R.font.adventpro_semiexpanded_light, FontWeight.Light),

@@ -1,8 +1,9 @@
 package host.capitalquiz.wifiradioset.data.communication
 
+import host.capitalquiz.common.di.DispatcherIO
 import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
 import host.capitalquiz.wifiradioset.domain.WifiDevice
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -11,11 +12,13 @@ import java.net.ServerSocket
 import java.net.Socket
 import javax.inject.Inject
 
-interface RadioSetServer : Connectable, RadioSetSocketHolder {
+interface RadioSetServer : RadioSetSocketHolder {
 
     class WiFiServer @Inject constructor(
         private val connectedTo: WifiDevice,
-        private val port: Int,
+        port: Int,
+        @DispatcherIO
+        private val dispatcher: CoroutineDispatcher,
     ) : RadioSetServer {
         private var serverSocket = ServerSocket(port)
         private var socket: Socket? = null
@@ -29,10 +32,10 @@ interface RadioSetServer : Connectable, RadioSetSocketHolder {
             } finally {
                 closeServerSocket()
             }
-            socket?.let { socket ->
+            socket?.let {
                 emit(WiFiConnectionResult.Connect(connectedTo))
             } ?: emit(WiFiConnectionResult.Error("Not connected"))
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(dispatcher)
 
         private fun closeServerSocket() {
             try {
@@ -40,6 +43,7 @@ interface RadioSetServer : Connectable, RadioSetSocketHolder {
             } catch (_: IOException) {
             }
         }
+
 
         override fun close() {
             closeServerSocket()

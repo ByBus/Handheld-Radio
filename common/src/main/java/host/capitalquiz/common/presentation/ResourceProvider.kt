@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.presentation
+package host.capitalquiz.common.presentation
 
 import android.content.Context
 import androidx.annotation.IdRes

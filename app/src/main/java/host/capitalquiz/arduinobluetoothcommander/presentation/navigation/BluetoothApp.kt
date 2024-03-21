@@ -11,7 +11,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.BluetoothChatScreen
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.DevicesScreen
-import host.capitalquiz.wifiradioset.presentation.WiFiRadioSetScreen
+import host.capitalquiz.wifiradioset.presentation.conversation.ConversationScreen
+import host.capitalquiz.wifiradioset.presentation.devices.WiFiRadioSetScreen
 
 @Composable
 fun BluetoothApp(navController: NavHostController = rememberNavController()) {
@@ -47,7 +48,15 @@ fun BluetoothApp(navController: NavHostController = rememberNavController()) {
         composable(
             route = Screens.RadioSet.route
         ) {
-            WiFiRadioSetScreen(viewModel = hiltViewModel(), onBack = navController::popBackStack)
+            WiFiRadioSetScreen(viewModel = hiltViewModel(), onConnect = {
+                navController.navigate(Screens.AudioConversation.destination())
+            })
+        }
+        composable(route = Screens.AudioConversation.route) {
+            ConversationScreen(
+                viewModel = hiltViewModel(),
+                onDisconnect = navController::popBackStack
+            )
         }
     }
 }

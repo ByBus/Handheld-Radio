@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="find_devices">Find Devices</string>
+    <string name="connection_was_rejected">Connection was rejected</string>
+    <string name="device_was_disconnected">Device was disconnected</string>
+    <string name="connection_was_aborted">Connection was aborted</string>
+    <string name="was_connected">" was connected"</string>
+    <string name="was_disconnected">" was disconnected"</string>
+    <string name="wifi_label">WiFi</string>
+    <string name="location_label">Location</string>
+    <string name="please_enable_wifi_and_location">Please enable %1$s to be able to connect to other devices\nTo be able to find devices, please enable %2$s</string>
+    <string name="start_wifi_discovery">To start a conversation, you first need to find a suitable device nearby.</string>
+    <string name="found_wifi_devices">Found Devices</string>
 </resources>

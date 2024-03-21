@@ -20,8 +20,16 @@ import host.capitalquiz.wifiradioset.data.WifiConnectionManager
 import host.capitalquiz.wifiradioset.data.WifiRadioSetRepository
 import host.capitalquiz.wifiradioset.data.communication.RadioSetModeFactory
 import host.capitalquiz.wifiradioset.data.communication.WiFiCommunication
+import host.capitalquiz.wifiradioset.domain.Communication
+import host.capitalquiz.wifiradioset.domain.CommunicationMode
 import host.capitalquiz.wifiradioset.domain.RadioSetCommunication
 import host.capitalquiz.wifiradioset.domain.RadioSetRepository
+import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
+import host.capitalquiz.wifiradioset.domain.WifiState
+import host.capitalquiz.wifiradioset.presentation.conversation.WiFiConnectionUiResult
+import host.capitalquiz.wifiradioset.presentation.conversation.WiFiConnectionUiResultMapper
+import host.capitalquiz.wifiradioset.presentation.devices.WifiStateUi
+import host.capitalquiz.wifiradioset.presentation.devices.WifiStateUiMapper
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -36,6 +44,11 @@ interface WiFIModule {
     @Binds
     fun bindWifiConnectionManager(impl: WifiConnectionManager): ConnectionManager
 
+    @Binds
+    fun bindWiFiStateUiMapper(impl: WifiStateUiMapper): WifiState.Mapper<WifiStateUi>
+
+    @Binds
+    fun bindWiFiConnectionMapper(impl: WiFiConnectionUiResultMapper): WiFiConnectionResult.Mapper<WiFiConnectionUiResult>
 
     companion object {
         @Provides
@@ -63,4 +76,14 @@ interface WiFiSingletonsModule {
     @Binds
     @ActivityRetainedScoped
     fun bindWiFiCommunication(impl: WiFiCommunication): RadioSetCommunication
+
+    companion object {
+        @Provides
+        fun provideConnectionModeConfigurator(communication: RadioSetCommunication): CommunicationMode =
+            communication
+
+        @Provides
+        fun provideWiFiConnection(communication: RadioSetCommunication): Communication =
+            communication
+    }
 }
