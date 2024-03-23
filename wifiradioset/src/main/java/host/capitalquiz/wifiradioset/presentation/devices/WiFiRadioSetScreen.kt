@@ -91,6 +91,7 @@ fun WiFiRadioSetScreen(viewModel: WiFiRadioSetViewModel, onConnect: () -> Unit) 
 
 @Composable
 fun InfoScreen(imageId: Int, message: AnnotatedString, bottomContent: @Composable () -> Unit = {}) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()

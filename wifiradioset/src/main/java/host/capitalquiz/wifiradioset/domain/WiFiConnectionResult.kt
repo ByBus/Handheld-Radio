@@ -1,13 +1,22 @@
 package host.capitalquiz.wifiradioset.domain
 
 sealed interface WiFiConnectionResult {
-    object Idle : WiFiConnectionResult
-    data class Error(val message: String) : WiFiConnectionResult
-    class Connect(val device: WifiDevice) : WiFiConnectionResult
-    class Disconnect(val device: WifiDevice) : WiFiConnectionResult
-    object Abort : WiFiConnectionResult
+    val isSuccessConnection: Boolean
 
-    fun <R> map(mapper: WiFiConnectionResult.Mapper<R>): R = mapper(this)
+    sealed class BaseConnectionResult : WiFiConnectionResult {
+        override val isSuccessConnection = false
+    }
+
+    object Idle : BaseConnectionResult()
+    data class Error(val message: String) : BaseConnectionResult()
+    class Connect(val device: WifiDevice) : WiFiConnectionResult {
+        override val isSuccessConnection = true
+    }
+
+    class Disconnect(val device: WifiDevice) : BaseConnectionResult()
+    object Abort : BaseConnectionResult()
+
+    fun <R> map(mapper: Mapper<R>): R = mapper(this)
 
     fun interface Mapper<R> {
         operator fun invoke(result: WiFiConnectionResult): R

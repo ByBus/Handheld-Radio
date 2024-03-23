@@ -1,5 +1,6 @@
 package host.capitalquiz.wifiradioset.data.communication
 
+import android.util.Log
 import host.capitalquiz.common.di.DispatcherIO
 import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
 import host.capitalquiz.wifiradioset.domain.WifiDevice
@@ -28,8 +29,10 @@ interface RadioSetClient : RadioSetSocketHolder {
             try {
                 socket.bind(null)
                 socket.connect(InetSocketAddress(address, port), 2000)
+                Log.d("WiFiClient", "CONNECTED")
                 emit(WiFiConnectionResult.Connect(connectedTo))
             } catch (e: IOException) {
+                Log.d("WiFiClientError", "connect: ${e.message}")
                 emit(WiFiConnectionResult.Disconnect(connectedTo))
                 close()
             }

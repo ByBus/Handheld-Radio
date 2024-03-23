@@ -1,6 +1,5 @@
 package host.capitalquiz.wifiradioset.domain
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import java.net.InetAddress
 
@@ -14,7 +13,8 @@ interface CommunicationMode {
 interface Communication {
     val connectionResult: StateFlow<WiFiConnectionResult>
     fun connect()
-    suspend fun send(message: String): Boolean
-    fun receive(): Flow<String>
+    suspend fun recordAudio()
+    suspend fun listen()
+    suspend fun mute(disableSound: Boolean)
     fun stop()
 }

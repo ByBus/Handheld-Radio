@@ -26,10 +26,15 @@ class ConversationViewModel @Inject constructor(
 
     init {
         communication.connect()
+    }
+
+    fun connect() {
+//        communication.connect()
         viewModelScope.launch {
-            communication.receive().collect {
-                _event.trySend(WiFiEvent.Toast(it))
-            }
+            communication.listen()
+        }
+        viewModelScope.launch {
+            communication.recordAudio()
         }
         viewModelScope.launch {
             state.collect {
@@ -38,9 +43,15 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    fun send(text: String) {
+    fun speak() {
         viewModelScope.launch {
-            communication.send(text)
+            communication.mute(true)
+        }
+    }
+
+    fun listen() {
+        viewModelScope.launch {
+            communication.mute(false)
         }
     }
 

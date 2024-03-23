@@ -3,7 +3,7 @@ package host.capitalquiz.common.ui
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import host.capitalquiz.wifiradioset.R
+import host.capitalquiz.common.R
 
 val adventProFamily = FontFamily(
     Font(R.font.adventpro_semiexpanded_light, FontWeight.Light),

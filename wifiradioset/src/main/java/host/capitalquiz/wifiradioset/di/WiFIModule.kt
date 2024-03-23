@@ -14,11 +14,14 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import dagger.hilt.android.scopes.ViewModelScoped
+import host.capitalquiz.common.di.DispatcherIO
 import host.capitalquiz.wifiradioset.data.ConnectionManager
 import host.capitalquiz.wifiradioset.data.NetworkChecker
 import host.capitalquiz.wifiradioset.data.WifiConnectionManager
 import host.capitalquiz.wifiradioset.data.WifiRadioSetRepository
+import host.capitalquiz.wifiradioset.data.communication.AudioPlayer
 import host.capitalquiz.wifiradioset.data.communication.RadioSetModeFactory
+import host.capitalquiz.wifiradioset.data.communication.Recorder
 import host.capitalquiz.wifiradioset.data.communication.WiFiCommunication
 import host.capitalquiz.wifiradioset.domain.Communication
 import host.capitalquiz.wifiradioset.domain.CommunicationMode
@@ -30,6 +33,7 @@ import host.capitalquiz.wifiradioset.presentation.conversation.WiFiConnectionUiR
 import host.capitalquiz.wifiradioset.presentation.conversation.WiFiConnectionUiResultMapper
 import host.capitalquiz.wifiradioset.presentation.devices.WifiStateUi
 import host.capitalquiz.wifiradioset.presentation.devices.WifiStateUiMapper
+import kotlinx.coroutines.CoroutineDispatcher
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -85,5 +89,15 @@ interface WiFiSingletonsModule {
         @Provides
         fun provideWiFiConnection(communication: RadioSetCommunication): Communication =
             communication
+
+        @Provides
+        fun provideRecorder(@DispatcherIO dispatcher: CoroutineDispatcher): Recorder {
+            return Recorder.Microphone(dispatcher = dispatcher)
+        }
+
+        @Provides
+        fun provideAudioPlayer(@DispatcherIO dispatcher: CoroutineDispatcher): AudioPlayer {
+            return AudioPlayer.StreamAudioPlayer(dispatcher = dispatcher)
+        }
     }
 }

@@ -24,4 +24,6 @@
         android:name="android.permission.INTERNET"
         android:required="true" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 </manifest>
