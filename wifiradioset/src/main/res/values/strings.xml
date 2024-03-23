@@ -11,4 +11,5 @@
     <string name="please_enable_wifi_and_location">Please enable %1$s to be able to connect to other devices\nTo be able to find devices, please enable %2$s</string>
     <string name="start_wifi_discovery">To start a conversation, you first need to find a suitable device nearby.</string>
     <string name="found_wifi_devices">Found Devices</string>
+    <string name="speak_button">Speak button</string>
 </resources>
