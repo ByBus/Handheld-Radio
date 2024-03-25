@@ -25,12 +25,13 @@ import host.capitalquiz.arduinobluetoothcommander.data.devices.PairedDevicesData
 import host.capitalquiz.arduinobluetoothcommander.data.messages.MessagesDatabase
 import host.capitalquiz.arduinobluetoothcommander.domain.BluetoothChecker
 import host.capitalquiz.arduinobluetoothcommander.domain.Communication
-import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult.*
+import host.capitalquiz.arduinobluetoothcommander.domain.ConnectionResult.Mapper
 import host.capitalquiz.arduinobluetoothcommander.domain.DeviceMapper
 import host.capitalquiz.arduinobluetoothcommander.domain.DevicesRepository
 import host.capitalquiz.arduinobluetoothcommander.presentation.ConnectionResultUi
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.ConnectionResultToUiMapper
 import host.capitalquiz.arduinobluetoothcommander.presentation.devicesscreen.DeviceUi
+import host.capitalquiz.common.di.DispatcherDefault
 import host.capitalquiz.common.di.DispatcherIO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -85,6 +86,10 @@ interface BluetoothModule {
         @DispatcherIO
         @Provides
         fun provideDispatcherIO(): CoroutineDispatcher = Dispatchers.IO
+
+        @DispatcherDefault
+        @Provides
+        fun provideDispatcherDefault(): CoroutineDispatcher = Dispatchers.Default
 
         @Provides
         fun provideUiStateMapper(@ApplicationContext context: Context): DeviceMapper<DeviceUi> {

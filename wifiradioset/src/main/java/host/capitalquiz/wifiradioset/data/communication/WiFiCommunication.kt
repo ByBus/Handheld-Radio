@@ -1,5 +1,6 @@
 package host.capitalquiz.wifiradioset.data.communication
 
+import android.util.Log
 import host.capitalquiz.wifiradioset.domain.RadioSetCommunication
 import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
 import host.capitalquiz.wifiradioset.domain.WifiDevice
@@ -11,8 +12,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.IOException
+import java.io.InputStream
 import java.net.InetAddress
 import javax.inject.Inject
 
@@ -61,8 +63,9 @@ class WiFiCommunication @Inject constructor(
         if (socket?.isConnected != true) return
         try {
             recorder.record(socket.outputStream)
-        } catch (e: IOException) {
-            _connectionResult.tryEmit(WiFiConnectionResult.Abort)
+        } catch (e: Exception) {
+            Log.d("WiFiCommunication0", "recordAudio: $e")
+            stop()
         }
     }
 
@@ -71,9 +74,13 @@ class WiFiCommunication @Inject constructor(
         val socket = socketHolder.socket()
         if (socket?.isConnected != true) return
         try {
-            audioPlayer.play(socket.inputStream)
-        } catch (e: IOException) {
-            _connectionResult.tryEmit(WiFiConnectionResult.Abort)
+            audioPlayer.play(socket.inputStream) { audioSessionId ->
+                Log.d("VisualisationProvider", "audioSessionId: $audioSessionId")
+                _connectionResult.update { WiFiConnectionResult.Streaming(audioSessionId) }
+            }
+        } catch (e: Exception) {
+            Log.d("WiFiCommunication0", "audioPlayer: $e")
+            stop()
         }
     }
 
@@ -92,4 +99,6 @@ class WiFiCommunication @Inject constructor(
         connectionResultJob = null
         socketHolder.close()
     }
+
+    override suspend fun sendAudio(inputStream: InputStream) = recorder.send(inputStream)
 }

@@ -15,11 +15,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import dagger.hilt.android.scopes.ViewModelScoped
 import host.capitalquiz.common.di.DispatcherIO
+import host.capitalquiz.wifiradioset.R
 import host.capitalquiz.wifiradioset.data.ConnectionManager
 import host.capitalquiz.wifiradioset.data.NetworkChecker
 import host.capitalquiz.wifiradioset.data.WifiConnectionManager
 import host.capitalquiz.wifiradioset.data.WifiRadioSetRepository
 import host.capitalquiz.wifiradioset.data.communication.AudioPlayer
+import host.capitalquiz.wifiradioset.data.communication.AudioSessionFrequenciesProvider
 import host.capitalquiz.wifiradioset.data.communication.RadioSetModeFactory
 import host.capitalquiz.wifiradioset.data.communication.Recorder
 import host.capitalquiz.wifiradioset.data.communication.WiFiCommunication
@@ -27,6 +29,7 @@ import host.capitalquiz.wifiradioset.domain.Communication
 import host.capitalquiz.wifiradioset.domain.CommunicationMode
 import host.capitalquiz.wifiradioset.domain.RadioSetCommunication
 import host.capitalquiz.wifiradioset.domain.RadioSetRepository
+import host.capitalquiz.wifiradioset.domain.VisualisationProvider
 import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
 import host.capitalquiz.wifiradioset.domain.WifiState
 import host.capitalquiz.wifiradioset.presentation.conversation.WiFiConnectionUiResult
@@ -54,6 +57,9 @@ interface WiFIModule {
     @Binds
     fun bindWiFiConnectionMapper(impl: WiFiConnectionUiResultMapper): WiFiConnectionResult.Mapper<WiFiConnectionUiResult>
 
+    @Binds
+    fun bindAudioVisualisationDataProvider(impl: AudioSessionFrequenciesProvider): VisualisationProvider
+
     companion object {
         @Provides
         @ViewModelScoped
@@ -67,6 +73,7 @@ interface WiFIModule {
         @Provides
         fun provideConnectivityManager(@ApplicationContext context: Context): ConnectivityManager =
             context.getSystemService()!!
+
     }
 }
 
@@ -91,13 +98,25 @@ interface WiFiSingletonsModule {
             communication
 
         @Provides
-        fun provideRecorder(@DispatcherIO dispatcher: CoroutineDispatcher): Recorder {
-            return Recorder.Microphone(dispatcher = dispatcher)
+        fun provideRecorder(
+            @DispatcherIO dispatcher: CoroutineDispatcher,
+            @ApplicationContext context: Context,
+        ): Recorder {
+            return Recorder.Microphone(
+                dispatcher = dispatcher,
+                context = context,
+                overAudioFile = R.raw.walkie_talkie_over_beep_44khz
+            )
         }
 
         @Provides
-        fun provideAudioPlayer(@DispatcherIO dispatcher: CoroutineDispatcher): AudioPlayer {
-            return AudioPlayer.StreamAudioPlayer(dispatcher = dispatcher)
+        fun provideAudioPlayer(
+            @DispatcherIO dispatcher: CoroutineDispatcher,
+
+            ): AudioPlayer {
+            return AudioPlayer.StreamAudioPlayer(
+                dispatcher = dispatcher,
+            )
         }
     }
 }

@@ -19,6 +19,10 @@ sealed interface WiFiConnectionUiResult {
         override fun produceEvent(): WiFiEvent = WiFiEvent.Empty
     }
 
+    class Streaming(private val audioSessionId: Int) : WiFiConnectionUiResult {
+        override fun produceEvent(): WiFiEvent = WiFiEvent.AudioSessionReadyEvent(audioSessionId)
+    }
+
     data class Error(override val message: String) : ResultWithNavigation()
     class Connect(override val message: String) : BaseResult()
     class Disconnect(override val message: String) : ResultWithNavigation()

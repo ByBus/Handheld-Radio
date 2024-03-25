@@ -12,4 +12,5 @@
     <string name="start_wifi_discovery">To start a conversation, you first need to find a suitable device nearby.</string>
     <string name="found_wifi_devices">Found Devices</string>
     <string name="speak_button">Speak button</string>
+    <string name="enable_speakerphone">Enable speakerphone</string>
 </resources>

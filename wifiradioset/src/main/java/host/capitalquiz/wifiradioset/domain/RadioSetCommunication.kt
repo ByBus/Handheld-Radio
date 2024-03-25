@@ -1,6 +1,7 @@
 package host.capitalquiz.wifiradioset.domain
 
 import kotlinx.coroutines.flow.StateFlow
+import java.io.InputStream
 import java.net.InetAddress
 
 interface RadioSetCommunication : CommunicationMode, Communication
@@ -17,4 +18,5 @@ interface Communication {
     suspend fun listen()
     suspend fun mute(disableSound: Boolean)
     fun stop()
+    suspend fun sendAudio(inputStream: InputStream)
 }

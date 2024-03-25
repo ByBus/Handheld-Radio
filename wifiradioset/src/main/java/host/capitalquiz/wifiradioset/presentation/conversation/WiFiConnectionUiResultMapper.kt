@@ -22,6 +22,7 @@ class WiFiConnectionUiResultMapper @Inject constructor(
 
             is WiFiConnectionResult.Error -> WiFiConnectionUiResult.Error(result.message)
             WiFiConnectionResult.Idle -> WiFiConnectionUiResult.Idle
+            is WiFiConnectionResult.Streaming -> WiFiConnectionUiResult.Streaming(result.audioSessionId)
         }
     }
 

@@ -15,6 +15,7 @@ sealed interface WiFiConnectionResult {
 
     class Disconnect(val device: WifiDevice) : BaseConnectionResult()
     object Abort : BaseConnectionResult()
+    class Streaming(val audioSessionId: Int) : BaseConnectionResult()
 
     fun <R> map(mapper: Mapper<R>): R = mapper(this)
 

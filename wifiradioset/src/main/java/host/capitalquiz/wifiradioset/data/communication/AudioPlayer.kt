@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 
 interface AudioPlayer {
-    suspend fun play(inputStream: InputStream)
+    suspend fun play(inputStream: InputStream, audioSessionIdConsumer: (Int) -> Unit)
     fun pause(isPause: Boolean)
     fun stop()
 
@@ -29,15 +29,15 @@ interface AudioPlayer {
             AudioTrack.getMinBufferSize(sampleRate, channelConfig, audioFormat)
         private var player: AudioTrack? = null
 
-        override suspend fun play(inputStream: InputStream) {
+        override suspend fun play(inputStream: InputStream, audioSessionIdConsumer: (Int) -> Unit) {
             val audioBuffer = ByteArray(minBufferSize)
             player = AudioTrack().apply {
                 play()
+                audioSessionIdConsumer.invoke(audioSessionId)
             }
             withContext(dispatcher) {
                 try {
                     while (coroutineContext.isActive && inputStream.read(audioBuffer) != -1) {
-                        if (player?.state == AudioTrack.PLAYSTATE_PAUSED) continue
                         player?.write(audioBuffer, 0, audioBuffer.size)
                     }
                 } finally {
@@ -75,7 +75,7 @@ interface AudioPlayer {
                 AudioTrack.Builder()
                     .setAudioAttributes(
                         AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                            .setUsage(AudioAttributes.USAGE_MEDIA)
                             .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                             .build()
                     )
