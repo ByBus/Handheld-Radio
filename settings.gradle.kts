@@ -17,3 +17,4 @@ rootProject.name = "ArduinoBluetoothCommander"
 include(":app")
 include(":wifiradioset")
 include(":common")
+include(":bluetoothchat")

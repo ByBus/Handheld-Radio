@@ -1,9 +1,9 @@
 package host.capitalquiz.arduinobluetoothcommander.presentation
 
-import host.capitalquiz.arduinobluetoothcommander.domain.Message
-import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.CurrentTimeProvider
-import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.MessageUi
-import host.capitalquiz.arduinobluetoothcommander.presentation.chatscreen.mappers.MessageToUiMapper
+import host.capitalquiz.bluetoothchat.domain.Message
+import host.capitalquiz.bluetoothchat.presentation.chatscreen.CurrentTimeProvider
+import host.capitalquiz.bluetoothchat.presentation.chatscreen.MessageUi
+import host.capitalquiz.bluetoothchat.presentation.chatscreen.mappers.MessageToUiMapper
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals

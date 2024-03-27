@@ -1,26 +1,20 @@
-@Suppress("DSL_SCOPE_VIOLATION")
+@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
     kotlin("kapt")
     alias(libs.plugins.hilt)
 }
 
 android {
-    namespace = "host.capitalquiz.arduinobluetoothcommander"
+    namespace = "host.capitalquiz.bluetoothchat"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "host.capitalquiz.arduinobluetoothcommander"
         minSdk = 22
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -33,6 +27,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -56,15 +51,15 @@ android {
 }
 
 dependencies {
+
     implementation(project(":common"))
-    implementation(project(":wifiradioset"))
-    implementation(project(":bluetoothchat"))
     implementation(platform(libs.compose.bom))
     implementation(libs.bundles.composeDependencies)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation(libs.com.google.dagger.hilt.android)
+    debugImplementation(libs.androidx.ui.tooling)
     kapt(libs.hilt.android.compiler)
 
     implementation(libs.androidx.room.runtime)
@@ -72,15 +67,9 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.navigation.compose)
+    coreLibraryDesugaring(libs.desugar.jdk.libs) // java 8 features (e.g. LocalDateTime)
 
-    testImplementation(libs.org.junit.jupiter)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.ui.test.junit4)
-    debugImplementation(libs.ui.tooling)
-    debugImplementation(libs.ui.test.manifest)
 }

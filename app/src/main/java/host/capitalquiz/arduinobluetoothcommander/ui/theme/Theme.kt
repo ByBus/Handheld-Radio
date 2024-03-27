@@ -14,6 +14,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import host.capitalquiz.common.ui.Pink40
+import host.capitalquiz.common.ui.Pink80
+import host.capitalquiz.common.ui.Purple40
+import host.capitalquiz.common.ui.Purple80
+import host.capitalquiz.common.ui.PurpleGrey40
+import host.capitalquiz.common.ui.PurpleGrey80
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
