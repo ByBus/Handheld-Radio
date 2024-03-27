@@ -19,8 +19,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +43,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import host.capitalquiz.common.SingleEventEffect
@@ -45,11 +52,14 @@ import host.capitalquiz.common.ui.components.DevicesListTitle
 import host.capitalquiz.wifiradioset.R
 import host.capitalquiz.wifiradioset.domain.WifiDevice
 import host.capitalquiz.wifiradioset.presentation.contracts.RequestWifiPermissions
+import values.CloudShape
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WiFiRadioSetScreen(
     viewModel: WiFiRadioSetViewModel,
     shouldDisconnect: Boolean,
+    openChat: () -> Unit,
     onConnect: () -> Unit,
 ) {
     val startDevicesDiscoveryLauncher =
@@ -69,30 +79,68 @@ fun WiFiRadioSetScreen(
     LaunchedEffect(shouldDisconnect) {
         if (shouldDisconnect) viewModel.disconnect()
     }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        AnimatedContent(targetState = uiState.devices.isNotEmpty(), label = "wifi devices list") {
-            if (it) {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    LazyColumn() {
-                        item {
-                            DevicesListTitle(stringResource(R.string.found_wifi_devices))
-                        }
-                        items(uiState.devices) { item ->
-                            DeviceItem(device = item, onClickDevice = viewModel::connect)
+    Scaffold(
+        floatingActionButtonPosition = FabPosition.End,
+        floatingActionButton = {
+            ChatFAB(openChat, iconSize = 32.dp)
+        }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
+            AnimatedContent(
+                targetState = uiState.devices.isNotEmpty(),
+                label = "wifi devices list"
+            ) {
+                if (it) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        LazyColumn() {
+                            item {
+                                DevicesListTitle(stringResource(R.string.found_wifi_devices))
+                            }
+                            items(uiState.devices) { item ->
+                                DeviceItem(device = item, onClickDevice = viewModel::connect)
+                            }
                         }
                     }
+                } else {
+                    FindDevicesScreen { startDevicesDiscoveryLauncher.launch() }
                 }
-            } else {
-                FindDevicesScreen { startDevicesDiscoveryLauncher.launch() }
+            }
+            AnimatedVisibility(uiState.isWiFiEnabled.not()) {
+                NoWiFiInfoScreen()
             }
         }
-        AnimatedVisibility(uiState.isWiFiEnabled.not()) {
-            NoWiFiInfoScreen()
-        }
     }
+}
+
+@Composable
+fun ChatFAB(onClick: () -> Unit, modifier: Modifier = Modifier, iconSize: Dp = 24.dp) {
+    ExtendedFloatingActionButton(
+        elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+        shape = CloudShape(32.dp),
+        containerColor = MaterialTheme.colorScheme.primary,
+        onClick = onClick,
+        modifier = modifier,
+        icon = {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_bt_chat_24),
+                contentDescription = stringResource(R.string.bluetooth_chat),
+                modifier = Modifier.size(iconSize),
+            )
+        },
+        text = { Text(text = stringResource(R.string.chat)) },
+    )
+}
+
+@Preview
+@Composable
+fun Fab() {
+    ChatFAB(onClick = {})
 }
 
 @Composable

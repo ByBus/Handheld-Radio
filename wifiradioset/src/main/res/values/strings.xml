@@ -13,4 +13,6 @@
     <string name="found_wifi_devices">Found Devices</string>
     <string name="speak_button">Speak button</string>
     <string name="enable_speakerphone">Enable speakerphone</string>
+    <string name="bluetooth_chat">Bluetooth chat</string>
+    <string name="chat">Chat</string>
 </resources>

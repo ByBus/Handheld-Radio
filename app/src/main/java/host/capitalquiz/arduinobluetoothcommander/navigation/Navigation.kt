@@ -61,9 +61,12 @@ fun Navigation(navController: NavHostController = rememberNavController()) {
                 key = Screens.RadioSetDevices.DISCONNECT,
                 default = false
             )
-            WiFiRadioSetScreen(viewModel = hiltViewModel(), shouldDisconnect) {
-                navController.navigate(Screens.AudioConversation.route)
-            }
+            WiFiRadioSetScreen(
+                viewModel = hiltViewModel(),
+                shouldDisconnect,
+                openChat = { navController.navigate(Screens.ChatDevices.route) },
+                onConnect = { navController.navigate(Screens.AudioConversation.route) }
+            )
         }
         composable(route = Screens.AudioConversation.route) {
             ConversationScreen(

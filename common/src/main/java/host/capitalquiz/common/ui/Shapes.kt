@@ -17,3 +17,5 @@ fun OtherUserCornerShape(radius: Dp = 16.dp) = RoundedCornerShape(
     bottomStart = radius,
     bottomEnd = radius
 )
+
+fun CloudShape(radius: Dp = 16.dp) = LocalUserCornerShape(radius)
