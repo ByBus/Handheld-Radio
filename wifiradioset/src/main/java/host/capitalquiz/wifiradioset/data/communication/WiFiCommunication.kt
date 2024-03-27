@@ -3,14 +3,12 @@ package host.capitalquiz.wifiradioset.data.communication
 import host.capitalquiz.wifiradioset.domain.RadioSetCommunication
 import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
 import host.capitalquiz.wifiradioset.domain.WifiDevice
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.InputStream
@@ -32,9 +30,6 @@ class WiFiCommunication @Inject constructor(
         MutableStateFlow<WiFiConnectionResult>(WiFiConnectionResult.Idle)
     override val connectionResult = _connectionResult.asStateFlow()
 
-    @Volatile
-    private var awaitConnection = CompletableDeferred<Unit>()
-
     override fun configureAsServer(connectedDevice: WifiDevice) {
         socketHolder.close()
         socketHolder = modeFactory.server(connectedDevice, PORT)
@@ -52,13 +47,11 @@ class WiFiCommunication @Inject constructor(
         connectionResultJob?.cancel()
         connectionResultJob = scope?.launch {
             connectionResultFlow
-                .onEach { if (it.isSuccessConnection) awaitConnection.complete(Unit) }
                 .collect(_connectionResult::tryEmit)
         }
     }
 
     override suspend fun recordAudio() {
-        awaitConnection.await()
         val socket = socketHolder.socket()
         if (socket?.isConnected != true) return
         try {
@@ -69,7 +62,6 @@ class WiFiCommunication @Inject constructor(
     }
 
     override suspend fun playAudio() {
-        awaitConnection.await()
         val socket = socketHolder.socket()
         if (socket?.isConnected != true) return
         try {
@@ -87,7 +79,6 @@ class WiFiCommunication @Inject constructor(
     }
 
     override fun stop() {
-        awaitConnection = CompletableDeferred()
         audioPlayer.stop()
         recorder.stop()
         _connectionResult.tryEmit(WiFiConnectionResult.Abort)

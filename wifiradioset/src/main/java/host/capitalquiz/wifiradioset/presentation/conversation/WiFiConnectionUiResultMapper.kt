@@ -16,7 +16,7 @@ class WiFiConnectionUiResultMapper @Inject constructor(
                 "${result.device.name} ${String(R.string.client_was_connected)}"
             )
 
-            is WiFiConnectionResult.Disconnect -> WiFiConnectionUiResult.Connect(
+            is WiFiConnectionResult.Disconnect -> WiFiConnectionUiResult.Disconnect(
                 "${result.device.name} ${String(R.string.client_was_disconnected)}"
             )
 

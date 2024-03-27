@@ -6,7 +6,8 @@ interface BaseEvent {
 }
 
 interface StreamEvent : BaseEvent {
-    fun audioSessionId(consumer: (Int) -> Unit): Event
+    fun audioSessionReady(consumer: (Int) -> Unit): Event
+    fun connectionReady(consumer: () -> Unit): Event
 }
 
 interface Event : StreamEvent {
@@ -14,7 +15,8 @@ interface Event : StreamEvent {
     abstract class BaseEvent : Event {
         override fun navigate(consumer: () -> Unit): Event = this
         override fun message(consumer: (String) -> Unit): Event = this
-        override fun audioSessionId(consumer: (Int) -> Unit): Event = this
+        override fun audioSessionReady(consumer: (Int) -> Unit): Event = this
+        override fun connectionReady(consumer: () -> Unit): Event = this
     }
 
     object Empty : BaseEvent()
@@ -40,9 +42,16 @@ interface Event : StreamEvent {
         }
     }
 
-    class AudioSessionReadyWiFiEventBase(private val sessionId: Int) : BaseEvent() {
-        override fun audioSessionId(consumer: (Int) -> Unit): Event {
+    class AudioSessionReady(private val sessionId: Int) : BaseEvent() {
+        override fun audioSessionReady(consumer: (Int) -> Unit): Event {
             consumer(sessionId)
+            return this
+        }
+    }
+
+    class ConnectionReady(message: String) : Toast(message) {
+        override fun connectionReady(consumer: () -> Unit): Event {
+            consumer()
             return this
         }
     }

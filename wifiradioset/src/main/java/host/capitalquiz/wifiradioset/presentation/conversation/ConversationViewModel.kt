@@ -26,7 +26,7 @@ class ConversationViewModel @Inject constructor(
     private val visualisationDataSource: VisualisationProvider,
     private val connectionResultUiMapper: ConnResultUiMapper<ConnUiResultUi>,
 ) : ViewModel() {
-    private val _event = Channel<StreamEvent>()
+    private val _event = Channel<StreamEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
 
     private val state = communication.connectionResult
@@ -38,17 +38,20 @@ class ConversationViewModel @Inject constructor(
         communication.connect()
     }
 
+    fun connect() {
+        viewModelScope.launch {
+            state.collect {
+                _event.trySend(it.map(connectionResultUiMapper).produceEvent())
+            }
+        }
+    }
+
     fun startConversation() {
         viewModelScope.launch {
             communication.playAudio()
         }
         viewModelScope.launch {
             communication.recordAudio()
-        }
-        viewModelScope.launch {
-            state.collect {
-                _event.trySend(it.map(connectionResultUiMapper).produceEvent())
-            }
         }
     }
 

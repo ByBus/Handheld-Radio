@@ -4,7 +4,6 @@ import android.content.Context
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
-import android.media.audiofx.NoiseSuppressor
 import androidx.annotation.RawRes
 import dagger.hilt.android.qualifiers.ApplicationContext
 import host.capitalquiz.common.di.DispatcherIO
@@ -82,12 +81,13 @@ interface Recorder : SendAudio {
             }
         }
 
+        //TODO trows NPE
         private fun suppressNoise(audioSessionId: Int) {
-            if (NoiseSuppressor.isAvailable()) {
-                NoiseSuppressor.create(audioSessionId).apply {
-                    enabled = true
-                }
-            }
+//            if (NoiseSuppressor.isAvailable()) {
+//                NoiseSuppressor.create(audioSessionId).apply {
+//                    enabled = true
+//                }
+//            }
         }
 
         private fun InputStream.writeTo(

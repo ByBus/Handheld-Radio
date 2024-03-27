@@ -20,11 +20,13 @@ sealed interface WiFiConnectionUiResult {
     }
 
     class Streaming(private val audioSessionId: Int) : WiFiConnectionUiResult {
-        override fun produceEvent(): Event = Event.AudioSessionReadyWiFiEventBase(audioSessionId)
+        override fun produceEvent(): Event = Event.AudioSessionReady(audioSessionId)
     }
 
     data class Error(override val message: String) : ResultWithNavigation()
-    class Connect(override val message: String) : BaseResult()
+    class Connect(override val message: String) : BaseResult() {
+        override fun produceEvent(): Event = Event.ConnectionReady(message)
+    }
     class Disconnect(override val message: String) : ResultWithNavigation()
     data class Abort(override val message: String) : ResultWithNavigation()
 }

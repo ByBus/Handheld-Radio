@@ -48,17 +48,11 @@ import host.capitalquiz.wifiradioset.presentation.contracts.RequestMicPermission
 fun ConversationScreen(viewModel: ConversationViewModel, onDisconnect: () -> Unit) {
     val context = LocalContext.current
 
-    SingleEventEffect(sideEffectFlow = viewModel.event) { event ->
-        event
-            .message { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
-            .navigate(onDisconnect)
-            .audioSessionId(viewModel::startAudioVisualization)
-    }
 
     val micPermissionContract =
         rememberLauncherForActivityResult(RequestMicPermission()) { allowRecord ->
             if (allowRecord) {
-                viewModel.startConversation()
+                viewModel.connect()
             } else {
                 onDisconnect()
             }
@@ -70,6 +64,14 @@ fun ConversationScreen(viewModel: ConversationViewModel, onDisconnect: () -> Uni
             micPermissionContract.launch()
             askPermission = false
         }
+    }
+
+    SingleEventEffect(sideEffectFlow = viewModel.event) { event ->
+        event
+            .message { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
+            .navigate(onDisconnect)
+            .audioSessionReady(viewModel::startAudioVisualization)
+            .connectionReady(viewModel::startConversation)
     }
 
     BackHandler(enabled = true, onBack = onDisconnect)
