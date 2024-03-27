@@ -36,12 +36,8 @@ interface AudioPlayer {
                 audioSessionIdConsumer.invoke(audioSessionId)
             }
             withContext(dispatcher) {
-                try {
-                    while (coroutineContext.isActive && inputStream.read(audioBuffer) != -1) {
-                        player?.write(audioBuffer, 0, audioBuffer.size)
-                    }
-                } finally {
-                    stop()
+                while (coroutineContext.isActive && inputStream.read(audioBuffer) != -1) {
+                    player?.write(audioBuffer, 0, audioBuffer.size)
                 }
             }
         }

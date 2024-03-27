@@ -2,8 +2,10 @@ package host.capitalquiz.arduinobluetoothcommander.presentation.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,17 +17,17 @@ import host.capitalquiz.wifiradioset.presentation.conversation.ConversationScree
 import host.capitalquiz.wifiradioset.presentation.devices.WiFiRadioSetScreen
 
 @Composable
-fun BluetoothApp(navController: NavHostController = rememberNavController()) {
+fun Navigation(navController: NavHostController = rememberNavController()) {
     NavHost(
         navController = navController,
-        startDestination = Screens.RadioSet.route,
+        startDestination = Screens.RadioSetDevices.route,
         modifier = Modifier
             .fillMaxSize()
     ) {
-        composable(route = Screens.BluetoothDevices.route) {
+        composable(route = Screens.ChatDevices.route) {
             DevicesScreen(
                 onNavigateToChat = { deviceName, mac ->
-                    navController.navigate(Screens.Chat.destination(deviceName, mac))
+                    navController.navigate(Screens.Chat.route(deviceName, mac))
                 }
             )
         }
@@ -46,17 +48,35 @@ fun BluetoothApp(navController: NavHostController = rememberNavController()) {
             )
         }
         composable(
-            route = Screens.RadioSet.route
-        ) {
-            WiFiRadioSetScreen(viewModel = hiltViewModel(), onConnect = {
-                navController.navigate(Screens.AudioConversation.destination())
-            })
+            route = Screens.RadioSetDevices.route,
+        ) { backStackEntry ->
+            val shouldDisconnect = backStackEntry.popSavedStateHandleValue(
+                key = Screens.RadioSetDevices.DISCONNECT,
+                default = false
+            )
+            WiFiRadioSetScreen(viewModel = hiltViewModel(), shouldDisconnect) {
+                navController.navigate(Screens.AudioConversation.route)
+            }
         }
         composable(route = Screens.AudioConversation.route) {
             ConversationScreen(
                 viewModel = hiltViewModel(),
-                onDisconnect = navController::popBackStack
+                onDisconnect = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        Screens.RadioSetDevices.DISCONNECT,
+                        true
+                    )
+                    navController.popBackStack()
+                }
             )
         }
     }
 }
+
+
+@Composable
+fun <T> NavBackStackEntry.popSavedStateHandleValue(key: String, default: T): T =
+    savedStateHandle.getStateFlow(key, default).collectAsState().value.also {
+        savedStateHandle.remove<T>(key)
+    }
+

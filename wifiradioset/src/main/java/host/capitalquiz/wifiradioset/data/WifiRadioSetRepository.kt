@@ -16,6 +16,7 @@ class WifiRadioSetRepository @Inject constructor(
     override fun startDeviceDiscovering() = connectionManager.discoverDevices()
 
     override fun connect(device: WifiDevice) = connectionManager.connect(device)
+    override fun disconnect() = connectionManager.disconnect()
 
     override fun close() = connectionManager.close()
 }

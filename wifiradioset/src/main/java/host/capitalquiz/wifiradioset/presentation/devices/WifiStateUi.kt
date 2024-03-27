@@ -4,11 +4,11 @@ import host.capitalquiz.wifiradioset.domain.WifiDevice
 
 sealed interface WifiStateUi {
     fun reduce(uiState: RadioSetUiState): RadioSetUiState
-    fun produceEvent(): WiFiEvent
+    fun produceEvent(): Event
 
     abstract class BaseWiFiUiState : WifiStateUi {
         protected open val enabled = true
-        override fun produceEvent(): WiFiEvent = WiFiEvent.Empty
+        override fun produceEvent(): Event = Event.Empty
 
         override fun reduce(uiState: RadioSetUiState): RadioSetUiState =
             uiState.copy(isWiFiEnabled = enabled)
@@ -29,14 +29,14 @@ sealed interface WifiStateUi {
     }
 
     class ConnectionFailed(private val message: String) : BaseWiFiUiState() {
-        override fun produceEvent(): WiFiEvent = WiFiEvent.Toast(message)
+        override fun produceEvent(): Event = Event.Toast(message)
     }
 
     object Connected : BaseWiFiUiState() {
-        override fun produceEvent(): WiFiEvent = WiFiEvent.Navigation
+        override fun produceEvent(): Event = Event.Navigation
     }
 
     class Disconnected(private val message: String) : BaseWiFiUiState() {
-        override fun produceEvent(): WiFiEvent = WiFiEvent.Toast(message)
+        override fun produceEvent(): Event = Event.Toast(message)
     }
 }

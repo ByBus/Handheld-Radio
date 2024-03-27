@@ -19,7 +19,7 @@ class WiFiRadioSetViewModel @Inject constructor(
     private val wifiRepository: RadioSetRepository,
     private val wifiStateUiMapper: WifiState.Mapper<WifiStateUi>,
 ) : ViewModel() {
-    private val eventChannel = Channel<WiFiEvent>()
+    private val eventChannel = Channel<Event>()
     val event = eventChannel.receiveAsFlow()
     private val baseState = MutableStateFlow(RadioSetUiState())
     val uiState = baseState.asStateFlow()
@@ -47,4 +47,6 @@ class WiFiRadioSetViewModel @Inject constructor(
         wifiRepository.close()
         super.onCleared()
     }
+
+    fun disconnect() = wifiRepository.disconnect()
 }

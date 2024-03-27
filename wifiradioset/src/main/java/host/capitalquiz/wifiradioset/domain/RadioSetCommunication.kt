@@ -15,7 +15,7 @@ interface Communication {
     val connectionResult: StateFlow<WiFiConnectionResult>
     fun connect()
     suspend fun recordAudio()
-    suspend fun listen()
+    suspend fun playAudio()
     suspend fun mute(disableSound: Boolean)
     fun stop()
     suspend fun sendAudio(inputStream: InputStream)

@@ -9,6 +9,7 @@ interface ConnectionManager {
     fun init()
     fun close()
     fun connect(device: WifiDevice)
+    fun disconnect()
     fun discoverDevices()
     fun stopDiscoverDevices()
 }

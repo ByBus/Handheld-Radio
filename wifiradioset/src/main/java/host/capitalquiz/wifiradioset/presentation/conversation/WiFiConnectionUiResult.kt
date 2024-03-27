@@ -1,26 +1,26 @@
 package host.capitalquiz.wifiradioset.presentation.conversation
 
-import host.capitalquiz.wifiradioset.presentation.devices.WiFiEvent
+import host.capitalquiz.wifiradioset.presentation.devices.Event
 
 sealed interface WiFiConnectionUiResult {
 
-    fun produceEvent(): WiFiEvent
+    fun produceEvent(): Event
 
     abstract class BaseResult : WiFiConnectionUiResult {
         protected abstract val message: String
-        override fun produceEvent(): WiFiEvent = WiFiEvent.Toast(message)
+        override fun produceEvent(): Event = Event.Toast(message)
     }
 
     abstract class ResultWithNavigation : BaseResult() {
-        override fun produceEvent(): WiFiEvent = WiFiEvent.ToastWithNavigation(message)
+        override fun produceEvent(): Event = Event.ToastWithNavigation(message)
     }
 
     object Idle : WiFiConnectionUiResult {
-        override fun produceEvent(): WiFiEvent = WiFiEvent.Empty
+        override fun produceEvent(): Event = Event.Empty
     }
 
     class Streaming(private val audioSessionId: Int) : WiFiConnectionUiResult {
-        override fun produceEvent(): WiFiEvent = WiFiEvent.AudioSessionReadyEvent(audioSessionId)
+        override fun produceEvent(): Event = Event.AudioSessionReadyWiFiEventBase(audioSessionId)
     }
 
     data class Error(override val message: String) : ResultWithNavigation()

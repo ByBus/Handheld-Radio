@@ -7,7 +7,7 @@ import host.capitalquiz.wifiradioset.domain.Communication
 import host.capitalquiz.wifiradioset.domain.VisualisationProvider
 import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
 import host.capitalquiz.wifiradioset.domain.toMagnitudes
-import host.capitalquiz.wifiradioset.presentation.devices.WiFiEvent
+import host.capitalquiz.wifiradioset.presentation.devices.StreamEvent
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,10 +23,10 @@ typealias ConnResultUiMapper<R> = WiFiConnectionResult.Mapper<R>
 @HiltViewModel
 class ConversationViewModel @Inject constructor(
     private val communication: Communication,
-    private val connectionResultUiMapper: ConnResultUiMapper<ConnUiResultUi>,
     private val visualisationDataSource: VisualisationProvider,
+    private val connectionResultUiMapper: ConnResultUiMapper<ConnUiResultUi>,
 ) : ViewModel() {
-    private val _event = Channel<WiFiEvent>()
+    private val _event = Channel<StreamEvent>()
     val event = _event.receiveAsFlow()
 
     private val state = communication.connectionResult
@@ -38,10 +38,9 @@ class ConversationViewModel @Inject constructor(
         communication.connect()
     }
 
-    fun connect() {
-//        communication.connect()
+    fun startConversation() {
         viewModelScope.launch {
-            communication.listen()
+            communication.playAudio()
         }
         viewModelScope.launch {
             communication.recordAudio()
@@ -71,16 +70,16 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
-        communication.stop()
-        super.onCleared()
-    }
-
     fun startAudioVisualization(sessionId: Int) {
         viewModelScope.launch {
             visualisationDataSource.visualization(sessionId).collect { bytes ->
-                _frequencies.update { bytes.toMagnitudes(100, bytes.size / 6) }
+                _frequencies.update { bytes.toMagnitudes(100) }
             }
         }
+    }
+
+    override fun onCleared() {
+        communication.stop()
+        super.onCleared()
     }
 }

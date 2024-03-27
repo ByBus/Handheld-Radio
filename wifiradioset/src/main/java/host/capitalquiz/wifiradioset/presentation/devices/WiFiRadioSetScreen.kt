@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -49,7 +50,11 @@ import host.capitalquiz.wifiradioset.domain.WifiDevice
 import host.capitalquiz.wifiradioset.presentation.contracts.RequestWifiPermissions
 
 @Composable
-fun WiFiRadioSetScreen(viewModel: WiFiRadioSetViewModel, onConnect: () -> Unit) {
+fun WiFiRadioSetScreen(
+    viewModel: WiFiRadioSetViewModel,
+    shouldDisconnect: Boolean,
+    onConnect: () -> Unit,
+) {
     val startDevicesDiscoveryLauncher =
         rememberLauncherForActivityResult(RequestWifiPermissions()) { allowDiscovery ->
             if (allowDiscovery) viewModel.findDevices()
@@ -61,10 +66,18 @@ fun WiFiRadioSetScreen(viewModel: WiFiRadioSetViewModel, onConnect: () -> Unit) 
     SingleEventEffect(viewModel.event) { event ->
         event
             .message { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
-            .navigate(onConnect)
+            .navigate {
+                Toast.makeText(context, "NAVIGATE TO CONVERSATION", Toast.LENGTH_SHORT).show()
+                onConnect()
+            }
     }
-    Box(modifier = Modifier.fillMaxSize()) {
 
+    LaunchedEffect(shouldDisconnect) {
+        Toast.makeText(context, "Should Disconnect: $shouldDisconnect", Toast.LENGTH_LONG).show()
+        if (shouldDisconnect) viewModel.disconnect()
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
         AnimatedContent(targetState = uiState.devices.isNotEmpty(), label = "wifi devices list") {
             if (it) {
                 Column(
@@ -91,7 +104,6 @@ fun WiFiRadioSetScreen(viewModel: WiFiRadioSetViewModel, onConnect: () -> Unit) 
 
 @Composable
 fun InfoScreen(imageId: Int, message: AnnotatedString, bottomContent: @Composable () -> Unit = {}) {
-
     Column(
         modifier = Modifier
             .fillMaxSize()

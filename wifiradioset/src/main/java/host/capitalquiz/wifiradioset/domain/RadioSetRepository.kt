@@ -6,5 +6,6 @@ interface RadioSetRepository {
     val wifiState: StateFlow<WifiState>
     fun startDeviceDiscovering()
     fun connect(device: WifiDevice)
+    fun disconnect()
     fun close()
 }

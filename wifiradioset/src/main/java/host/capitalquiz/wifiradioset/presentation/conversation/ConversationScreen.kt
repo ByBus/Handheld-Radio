@@ -1,7 +1,7 @@
 package host.capitalquiz.wifiradioset.presentation.conversation
 
-import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.launch
 import androidx.compose.foundation.Canvas
@@ -49,7 +49,6 @@ fun ConversationScreen(viewModel: ConversationViewModel, onDisconnect: () -> Uni
     val context = LocalContext.current
 
     SingleEventEffect(sideEffectFlow = viewModel.event) { event ->
-        Log.d("VisualisationProvider", "EVENT: $event")
         event
             .message { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
             .navigate(onDisconnect)
@@ -59,7 +58,7 @@ fun ConversationScreen(viewModel: ConversationViewModel, onDisconnect: () -> Uni
     val micPermissionContract =
         rememberLauncherForActivityResult(RequestMicPermission()) { allowRecord ->
             if (allowRecord) {
-                viewModel.connect()
+                viewModel.startConversation()
             } else {
                 onDisconnect()
             }
@@ -72,6 +71,8 @@ fun ConversationScreen(viewModel: ConversationViewModel, onDisconnect: () -> Uni
             askPermission = false
         }
     }
+
+    BackHandler(enabled = true, onBack = onDisconnect)
 
     val interactionSource = remember { MutableInteractionSource() }
     val isSpeakButtonPressed by interactionSource.collectIsPressedAsState()
@@ -108,9 +109,9 @@ fun ConversationScreen(viewModel: ConversationViewModel, onDisconnect: () -> Uni
         }
         Histogram(
             values = histogramValue,
-            binWidth = 4.dp,
             color = MaterialTheme.colorScheme.secondary,
-            symmetric = true,
+            symmetric = false,
+            flip = false,
             modifier = Modifier
                 .padding(24.dp)
                 .fillMaxSize()
@@ -180,9 +181,10 @@ fun LayoutPreview() {
             )
         }
         Histogram(
-            values = (23..134).take(64).shuffled(),
+            values = (23..300).step(5).take(64),
             4.dp,
             color = Color.Green,
+            flip = false,
             symmetric = true,
             modifier = Modifier
                 .padding(24.dp)
@@ -209,25 +211,26 @@ fun LayoutPreview() {
 fun Histogram(
     values: List<Int>,
     binWidth: Dp = Dp.Unspecified,
-    binFactor: Float = 0.9f,
+    binFactor: Float = 0.8f,
     color: Color,
     symmetric: Boolean = false,
+    flip: Boolean = false,
     modifier: Modifier,
 ) {
     Box(modifier = modifier) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val width = size.width
-            val middle = size.height / 2
-            val step = width / (values.size - 1)
-            val strokeWidth = binWidth.toPx()
+            val items = if (flip) values.reversed() else values
+            val middleY = size.height / 2
+            val middleIndex = values.size shr 1
+            val step = size.width / (values.size - 1)
+            val strokeWidth = if (binWidth == Dp.Unspecified) step * binFactor else binWidth.toPx()
             var left = step / 2
-            val arrayMiddle = values.size / 2
-            for ((index, value) in values.withIndex()) {
+            for (i in items.indices) {
                 val half =
-                    (if (symmetric && index > arrayMiddle) values[arrayMiddle - (index - arrayMiddle)] else value) / 2
+                    (if (symmetric && i > middleIndex) items[middleIndex - (i - middleIndex)] else items[i]) / 2
                 drawLine(
-                    start = Offset(x = left, y = middle + half),
-                    end = Offset(x = left, y = middle - half),
+                    start = Offset(x = left, y = middleY + half.coerceAtLeast(1)),
+                    end = Offset(x = left, y = middleY - half.coerceAtLeast(1)),
                     color = color,
                     strokeWidth = strokeWidth,
                     cap = StrokeCap.Round

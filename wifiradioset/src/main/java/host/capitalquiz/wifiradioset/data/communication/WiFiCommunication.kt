@@ -1,6 +1,5 @@
 package host.capitalquiz.wifiradioset.data.communication
 
-import android.util.Log
 import host.capitalquiz.wifiradioset.domain.RadioSetCommunication
 import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
 import host.capitalquiz.wifiradioset.domain.WifiDevice
@@ -47,6 +46,7 @@ class WiFiCommunication @Inject constructor(
     }
 
     override fun connect() {
+        _connectionResult.tryEmit(WiFiConnectionResult.Idle)
         val connectionResultFlow = socketHolder.connect()
         if (scope == null) scope = CoroutineScope(Dispatchers.Main)
         connectionResultJob?.cancel()
@@ -64,22 +64,19 @@ class WiFiCommunication @Inject constructor(
         try {
             recorder.record(socket.outputStream)
         } catch (e: Exception) {
-            Log.d("WiFiCommunication0", "recordAudio: $e")
             stop()
         }
     }
 
-    override suspend fun listen() {
+    override suspend fun playAudio() {
         awaitConnection.await()
         val socket = socketHolder.socket()
         if (socket?.isConnected != true) return
         try {
             audioPlayer.play(socket.inputStream) { audioSessionId ->
-                Log.d("VisualisationProvider", "audioSessionId: $audioSessionId")
                 _connectionResult.update { WiFiConnectionResult.Streaming(audioSessionId) }
             }
         } catch (e: Exception) {
-            Log.d("WiFiCommunication0", "audioPlayer: $e")
             stop()
         }
     }

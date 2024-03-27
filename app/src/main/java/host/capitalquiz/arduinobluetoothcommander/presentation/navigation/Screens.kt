@@ -1,41 +1,51 @@
 package host.capitalquiz.arduinobluetoothcommander.presentation.navigation
 
-enum class Screens(vararg val arguments: String) {
-    BluetoothDevices {
-        override val route = "devices"
-        override fun destination(vararg values: String): String = route
-    },
-    Chat("chatName", "macAddress") {
-        override val route = "bluetoothChat?${formatArgs(arguments, arguments, true)}"
-        override fun destination(vararg values: String): String =
-            "bluetoothChat?${formatArgs(arguments, values)}"
-    },
-    RadioSet {
-        override val route = "radioSet"
-        override fun destination(vararg values: String): String = route
-    },
-    AudioConversation {
-        override val route = "conversation"
-        override fun destination(vararg values: String): String = route
-    };
+interface Screens {
+    fun argumentN(n: Int): String
+    val route: String
 
-    fun argumentN(n: Int): String = arguments[n]
-    abstract val route: String
-    abstract fun destination(vararg values: String): String
+    abstract class BaseScreen(
+        protected val baseRoute: String,
+        private vararg val arguments: String,
+    ) : Screens {
+        override fun argumentN(n: Int): String = arguments[n]
+        protected fun destination(vararg values: String): String =
+            "$baseRoute?${formatArgs(arguments, values)}"
 
-    protected fun formatArgs(
-        names: Array<out String>,
-        values: Array<out String>,
-        route: Boolean = false,
-    ): String = with(StringBuilder()) {
-        names.zip(values) { name, value ->
-            append(name).append("=")
-            if (route) append("{")
-            append(value)
-            if (route) append("}")
-            append("&")
+        override val route = if (arguments.isEmpty()) baseRoute else "$baseRoute?${
+            formatArgs(
+                arguments,
+                arguments,
+                true
+            )
+        }"
+
+        private fun formatArgs(
+            names: Array<out String>,
+            values: Array<out String>,
+            route: Boolean = false,
+        ): String = with(StringBuilder()) {
+            names.zip(values) { name, value ->
+                append(name).append("=")
+                if (route) append("{")
+                append(value)
+                if (route) append("}")
+                append("&")
+            }
+            setLength(length - 1)
+            this.toString()
         }
-        setLength(length - 1)
-        this.toString()
     }
+
+    object ChatDevices : BaseScreen(baseRoute = "devices")
+
+    object Chat : BaseScreen(baseRoute = "bluetoothChat", "chatName", "macAddress") {
+        fun route(chatName: String, macAddress: String): String = destination(chatName, macAddress)
+    }
+
+    object RadioSetDevices : BaseScreen(baseRoute = "radioSet") {
+        const val DISCONNECT = "disconnect"
+    }
+
+    object AudioConversation : BaseScreen(baseRoute = "conversation")
 }
