@@ -12,7 +12,6 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.WifiP2pManager.ActionListener
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import dagger.hilt.android.qualifiers.ApplicationContext
 import host.capitalquiz.common.getExtra
 import host.capitalquiz.wifiradioset.domain.CommunicationMode
@@ -97,11 +96,10 @@ class WifiConnectionManager @Inject constructor(
             context.unregisterReceiver(this)
             isRegistered = false
         }
-//        disconnect()
+        disconnect()
     }
 
     override fun disconnect() {
-        Toast.makeText(context, "DISCONNECT CALLED", Toast.LENGTH_SHORT).show()
         if (channel != null) {
             wifiManager.requestGroupInfo(channel) { group ->
                 if (group != null) {
@@ -153,10 +151,8 @@ class WifiConnectionManager @Inject constructor(
     private val connectionListener = WifiP2pManager.ConnectionInfoListener { info ->
         val groupOwnerAddress = info.groupOwnerAddress
         if (info.groupFormed && info.isGroupOwner) { //Server
-            Toast.makeText(context, "Server", Toast.LENGTH_SHORT).show()
             communication.configureAsServer(connectingDevice ?: WifiDevice("Client", ""))
         } else if (info.groupFormed) { // Client
-            Toast.makeText(context, "Client", Toast.LENGTH_SHORT).show()
             communication.configureAsClient(
                 connectingDevice ?: WifiDevice(
                     "Server",

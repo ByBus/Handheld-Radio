@@ -66,14 +66,10 @@ fun WiFiRadioSetScreen(
     SingleEventEffect(viewModel.event) { event ->
         event
             .message { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
-            .navigate {
-                Toast.makeText(context, "NAVIGATE TO CONVERSATION", Toast.LENGTH_SHORT).show()
-                onConnect()
-            }
+            .navigate(onConnect)
     }
 
     LaunchedEffect(shouldDisconnect) {
-        Toast.makeText(context, "Should Disconnect: $shouldDisconnect", Toast.LENGTH_LONG).show()
         if (shouldDisconnect) viewModel.disconnect()
     }
 
