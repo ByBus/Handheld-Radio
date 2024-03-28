@@ -33,6 +33,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -74,6 +75,8 @@ dependencies {
 
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.navigation.compose)
+
+    coreLibraryDesugaring(libs.desugar.jdk.libs) // java 8 features (e.g. LocalDateTime)
 
     testImplementation(libs.org.junit.jupiter)
     testImplementation(libs.junit)
