@@ -10,15 +10,15 @@ interface VisualisationProvider {
     fun visualization(audioSessionId: Int): Flow<ByteArray>
 }
 
-fun ByteArray.toMagnitudes(multiplier: Int, shiftDistance: Int = 0): List<Int> {
+fun ByteArray.toMagnitudes(multiplier: Int = 1, shiftDistance: Int = 0): List<Int> {
     val result = (0 until size / 2).map { k ->
         if (k == 0) abs(get(0).toInt())
         else {
             val i = k * 2
-            val magnitude = hypot(get(i).toDouble(), get(i + 1).toDouble()).roundToInt()
-            (multiplier * log10(magnitude.toDouble())).toInt().coerceAtLeast(0)
+            val magnitude = hypot(get(i).toDouble(), get(i + 1).toDouble())
+            val normalised = multiplier * log10(magnitude)
+            normalised.roundToInt().coerceAtLeast(0)
         }
-
     }
     return if (shiftDistance % result.size == 0)
         result

@@ -36,7 +36,7 @@ class AudioSessionFrequenciesProvider @Inject constructor(
                 trySend(fft)
             }
         }
-        visualizer.setDataCaptureListener(listener, 16_000, false, true)
+        visualizer.setDataCaptureListener(listener, Visualizer.getMaxCaptureRate(), false, true)
         visualizer.setEnabled(true)
         awaitClose {
             visualizer.enabled = false

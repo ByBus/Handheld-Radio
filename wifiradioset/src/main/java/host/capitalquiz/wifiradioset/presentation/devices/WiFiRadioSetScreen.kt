@@ -51,7 +51,7 @@ import host.capitalquiz.common.SingleEventEffect
 import host.capitalquiz.common.ui.components.DevicesListTitle
 import host.capitalquiz.wifiradioset.R
 import host.capitalquiz.wifiradioset.domain.WifiDevice
-import host.capitalquiz.wifiradioset.presentation.contracts.RequestWifiPermissions
+import host.capitalquiz.wifiradioset.presentation.devices.contracts.RequestWifiPermissions
 import values.CloudShape
 
 @OptIn(ExperimentalMaterial3Api::class)

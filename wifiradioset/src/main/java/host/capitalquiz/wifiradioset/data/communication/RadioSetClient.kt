@@ -27,7 +27,7 @@ interface RadioSetClient : RadioSetSocketHolder {
         override fun connect(): Flow<WiFiConnectionResult> = flow {
             try {
                 socket.bind(null)
-                socket.connect(InetSocketAddress(address, port), 2000)
+                socket.connect(InetSocketAddress(address, port), 4000)
                 emit(WiFiConnectionResult.Connect(connectedTo))
             } catch (e: IOException) {
                 emit(WiFiConnectionResult.Disconnect(connectedTo))

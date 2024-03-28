@@ -35,6 +35,7 @@ interface Recorder : SendAudio {
     ) : Recorder {
         private val minBufferSize =
             AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat)
+
         private var microphone: AudioRecord? = null
         private val isPaused = AtomicBoolean(false)
 

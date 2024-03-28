@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import host.capitalquiz.common.SingleEventEffect
 import host.capitalquiz.wifiradioset.R
-import host.capitalquiz.wifiradioset.presentation.contracts.RequestMicPermission
+import host.capitalquiz.wifiradioset.presentation.conversation.contracts.RequestMicPermission
 
 @Composable
 fun ConversationScreen(viewModel: ConversationViewModel, onDisconnect: () -> Unit) {

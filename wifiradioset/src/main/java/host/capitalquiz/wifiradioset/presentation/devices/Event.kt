@@ -22,37 +22,23 @@ interface Event : StreamEvent {
     object Empty : BaseEvent()
 
     open class Toast(private val text: String) : BaseEvent() {
-        override fun message(consumer: (String) -> Unit): Event {
-            consumer(text)
-            return this
-        }
+        override fun message(consumer: (String) -> Unit): Event = this.also { consumer(text) }
     }
 
     object Navigation : BaseEvent() {
-        override fun navigate(consumer: () -> Unit): Event {
-            consumer()
-            return this
-        }
+        override fun navigate(consumer: () -> Unit): Event = this.also { consumer() }
     }
 
     class ToastWithNavigation(message: String) : Toast(message) {
-        override fun navigate(consumer: () -> Unit): Event {
-            consumer()
-            return this
-        }
+        override fun navigate(consumer: () -> Unit): Event = this.also { consumer() }
     }
 
     class AudioSessionReady(private val sessionId: Int) : BaseEvent() {
-        override fun audioSessionReady(consumer: (Int) -> Unit): Event {
-            consumer(sessionId)
-            return this
-        }
+        override fun audioSessionReady(consumer: (Int) -> Unit): Event =
+            this.also { consumer(sessionId) }
     }
 
     class ConnectionReady(message: String) : Toast(message) {
-        override fun connectionReady(consumer: () -> Unit): Event {
-            consumer()
-            return this
-        }
+        override fun connectionReady(consumer: () -> Unit): Event = this.also { consumer() }
     }
 }

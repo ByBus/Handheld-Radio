@@ -1,4 +1,4 @@
-package host.capitalquiz.wifiradioset.presentation.contracts
+package host.capitalquiz.wifiradioset.presentation.devices.contracts
 
 import android.Manifest
 import android.os.Build

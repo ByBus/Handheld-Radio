@@ -1,4 +1,4 @@
-package host.capitalquiz.wifiradioset.presentation.contracts
+package host.capitalquiz.wifiradioset.presentation.conversation.contracts
 
 import android.Manifest
 import host.capitalquiz.common.presentation.contracts.MultiplePermissionsContract

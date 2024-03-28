@@ -1,5 +1,6 @@
 package host.capitalquiz.wifiradioset.data.communication
 
+import android.util.Log
 import host.capitalquiz.wifiradioset.domain.RadioSetCommunication
 import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
 import host.capitalquiz.wifiradioset.domain.WifiDevice
@@ -57,6 +58,7 @@ class WiFiCommunication @Inject constructor(
         try {
             recorder.record(socket.outputStream)
         } catch (e: Exception) {
+            Log.d("WiFiCommunicationError", "recordAudio: ${e.stackTrace}")
             stop()
         }
     }
@@ -69,6 +71,8 @@ class WiFiCommunication @Inject constructor(
                 _connectionResult.update { WiFiConnectionResult.Streaming(audioSessionId) }
             }
         } catch (e: Exception) {
+            Log.d("WiFiCommunicationError", "playAudio: ${e.stackTrace}")
+            e.printStackTrace()
             stop()
         }
     }
