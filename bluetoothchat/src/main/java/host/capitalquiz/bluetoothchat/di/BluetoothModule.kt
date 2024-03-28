@@ -17,13 +17,11 @@ import host.capitalquiz.bluetoothchat.data.communication.ConnectionModeFactory
 import host.capitalquiz.bluetoothchat.data.communication.DeviceConnectionWatcher
 import host.capitalquiz.bluetoothchat.data.communication.DevicesCommunication
 import host.capitalquiz.bluetoothchat.data.devices.BluetoothDevicesRepository
-import host.capitalquiz.bluetoothchat.data.devices.BluetoothStatus
 import host.capitalquiz.bluetoothchat.data.devices.DeviceNameProvider
 import host.capitalquiz.bluetoothchat.data.devices.DevicesClosableDataSource
 import host.capitalquiz.bluetoothchat.data.devices.FoundDevicesReceiver
 import host.capitalquiz.bluetoothchat.data.devices.PairedDevicesDataSource
 import host.capitalquiz.bluetoothchat.data.messages.MessagesDatabase
-import host.capitalquiz.bluetoothchat.domain.BluetoothChecker
 import host.capitalquiz.bluetoothchat.domain.Communication
 import host.capitalquiz.bluetoothchat.domain.ConnectionResult.Mapper
 import host.capitalquiz.bluetoothchat.domain.DeviceMapper
@@ -52,9 +50,6 @@ interface BluetoothModule {
 
     @Binds
     fun bindBluetoothDevicesRepository(impl: BluetoothDevicesRepository): DevicesRepository
-
-    @Binds
-    fun bindBluetoothStatus(impl: BluetoothStatus): BluetoothChecker
 
     @Binds
     @Singleton
