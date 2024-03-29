@@ -4,6 +4,7 @@ import host.capitalquiz.bluetoothchat.data.devices.DeviceNameProvider
 import host.capitalquiz.bluetoothchat.data.toBluetoothMessage
 import host.capitalquiz.bluetoothchat.domain.Chat
 import host.capitalquiz.bluetoothchat.domain.Communication
+import host.capitalquiz.bluetoothchat.domain.InstanceProvider
 import host.capitalquiz.bluetoothchat.domain.Message
 import host.capitalquiz.bluetoothchat.domain.MessagesRepository
 import host.capitalquiz.common.di.DispatcherIO
@@ -18,7 +19,7 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class BluetoothMessagesRepository @Inject constructor(
-    private val communication: Communication,
+    private val communicationProvider: InstanceProvider<Communication>,
     private val messagesLocalDataSource: MessagesDataSource,
     private val nameProvider: DeviceNameProvider,
     @DispatcherIO
@@ -38,12 +39,12 @@ class BluetoothMessagesRepository @Inject constructor(
     override suspend fun send(message: Message): Long {
         val newMessage =
             message.copy(name = nameProvider.provide(), chatId = currentChatId, fromMe = true)
-        val result = communication.send(newMessage.toBluetoothMessage())
+        val result = communicationProvider.provide().send(newMessage.toBluetoothMessage())
         return if (result) messagesLocalDataSource.insert(newMessage) else 0
     }
 
     override fun receiveIncomingMessages(): Flow<Message> {
-        return communication.receive().map { btMessage ->
+        return communicationProvider.provide().receive().map { btMessage ->
             Message(-1, btMessage.name, btMessage.message, btMessage.time, currentChatId)
         }.onEach { message ->
             messagesLocalDataSource.insert(message)

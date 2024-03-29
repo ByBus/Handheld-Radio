@@ -8,6 +8,7 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import host.capitalquiz.bluetoothchat.domain.Communication
 import host.capitalquiz.bluetoothchat.domain.ConnectionResult
+import host.capitalquiz.bluetoothchat.domain.InstanceProvider
 import host.capitalquiz.bluetoothchat.domain.Message
 import host.capitalquiz.bluetoothchat.domain.MessageMapper
 import host.capitalquiz.bluetoothchat.domain.MessagesRepository
@@ -23,7 +24,7 @@ import kotlinx.coroutines.launch
 class BluetoothChatViewModel @AssistedInject constructor(
     @Assisted("name") val chatName: String,
     @Assisted("mac") val macAddress: String,
-    private val communication: Communication,
+    private val communication: InstanceProvider<Communication>,
     private val messagesRepository: MessagesRepository,
     private val connectionResultMapper: ConnectionResult.Mapper<ChatConnectionUi>,
     private val messageMapper: MessageMapper<MessageUi>,
@@ -32,7 +33,7 @@ class BluetoothChatViewModel @AssistedInject constructor(
     val uiState = combine(
         messagesRepository.readMessages(macAddress, chatName)
             .map { messages -> messages.mapItems(messageMapper) },
-        communication.connectionState.map { it.map(connectionResultMapper) }
+        communication.provide().connectionState.map { it.map(connectionResultMapper) }
     ) { messages, connectionState ->
         ChatUiState(chatName, messages, connectionState.isConnected())
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ChatUiState(chatName))
@@ -50,7 +51,7 @@ class BluetoothChatViewModel @AssistedInject constructor(
     }
 
     override fun onCleared() {
-        communication.close()
+        communication.provide().close()
         super.onCleared()
     }
 

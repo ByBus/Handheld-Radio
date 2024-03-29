@@ -7,6 +7,7 @@ import host.capitalquiz.bluetoothchat.domain.Communication
 import host.capitalquiz.bluetoothchat.domain.ConnectionResult
 import host.capitalquiz.bluetoothchat.domain.DeviceMapper
 import host.capitalquiz.bluetoothchat.domain.DevicesRepository
+import host.capitalquiz.bluetoothchat.domain.SingletonFactory
 import host.capitalquiz.bluetoothchat.domain.mapItems
 import host.capitalquiz.bluetoothchat.presentation.ConnectionResultUi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,7 @@ class BluetoothViewModel @Inject constructor(
     private val repository: DevicesRepository,
     private val deviceUiMapper: DeviceMapper<DeviceUi>,
     private val connectionResultUiMapper: ConnectionResult.Mapper<ConnectionResultUi>,
-    private val communication: Communication,
+    private val communication: SingletonFactory<Communication>,
 ) : ViewModel() {
 
     private val _message = MutableStateFlow<Event>(Event.Empty)
@@ -43,7 +44,7 @@ class BluetoothViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            communication.connectionState.collect { connectionResult ->
+            communication.create().connectionState.collect { connectionResult ->
                 oldState.update {
                     connectionResult
                         .map(connectionResultUiMapper)
@@ -53,7 +54,7 @@ class BluetoothViewModel @Inject constructor(
         }
     }
 
-    fun disconnect() = communication.close()
+    fun disconnect() = communication.provide().close()
 
     fun startScanning() {
         oldState.update { it.copy(isDiscoveringDevices = true) }
@@ -68,12 +69,12 @@ class BluetoothViewModel @Inject constructor(
     fun connectTo(deviceUi: DeviceUi) {
         viewModelScope.launch {
             val device = deviceUi.toDomain()
-            communication.connectToDevice(device)
+            communication.provide().connectToDevice(device)
         }
     }
 
     fun startServer(serverName: String) {
-        viewModelScope.launch { communication.startServer(serverName) }
+        viewModelScope.launch { communication.provide().startServer(serverName) }
     }
 
     private fun send(message: String) {
@@ -82,7 +83,8 @@ class BluetoothViewModel @Inject constructor(
 
     override fun onCleared() {
         stopScanning()
-        communication.close()
+        communication.provide().close()
+        communication.recycle()
         super.onCleared()
     }
 }

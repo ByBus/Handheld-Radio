@@ -13,6 +13,7 @@ import dagger.hilt.components.SingletonComponent
 import host.capitalquiz.bluetoothchat.R
 import host.capitalquiz.bluetoothchat.data.communication.BluetoothDeviceStateReceiver
 import host.capitalquiz.bluetoothchat.data.communication.BluetoothMessageDecoder
+import host.capitalquiz.bluetoothchat.data.communication.CommunicationSingletonFactory
 import host.capitalquiz.bluetoothchat.data.communication.ConnectionModeFactory
 import host.capitalquiz.bluetoothchat.data.communication.DeviceConnectionWatcher
 import host.capitalquiz.bluetoothchat.data.communication.DevicesCommunication
@@ -26,6 +27,8 @@ import host.capitalquiz.bluetoothchat.domain.Communication
 import host.capitalquiz.bluetoothchat.domain.ConnectionResult.Mapper
 import host.capitalquiz.bluetoothchat.domain.DeviceMapper
 import host.capitalquiz.bluetoothchat.domain.DevicesRepository
+import host.capitalquiz.bluetoothchat.domain.InstanceProvider
+import host.capitalquiz.bluetoothchat.domain.SingletonFactory
 import host.capitalquiz.bluetoothchat.presentation.ConnectionResultUi
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.ConnectionResultToUiMapper
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.DeviceUi
@@ -48,7 +51,6 @@ interface BluetoothModule {
     fun bindBluetoothDevicesRepository(impl: BluetoothDevicesRepository): DevicesRepository
 
     @Binds
-    @Singleton
     fun bindDevicesCommunication(impl: DevicesCommunication): Communication
 
     @Binds
@@ -66,8 +68,16 @@ interface BluetoothModule {
     @Binds
     fun bindConnectionResultToUiMapper(impl: ConnectionResultToUiMapper): Mapper<ConnectionResultUi>
 
+    @Binds
+    @Singleton
+    fun bindCommunicationFactory(impl: CommunicationSingletonFactory): SingletonFactory<Communication>
+
 
     companion object {
+        @Provides
+        fun provideCommunicationProvider(provider: SingletonFactory<Communication>): InstanceProvider<Communication> =
+            provider
+
         @Provides
         fun provideBluetoothManager(@ApplicationContext appContext: Context): BluetoothManager? {
             return appContext.getSystemService()
