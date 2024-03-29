@@ -1,4 +1,4 @@
-package host.capitalquiz.bluetoothchat.components
+package host.capitalquiz.bluetoothchat.presentation.devicesscreen.components
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState

@@ -93,12 +93,12 @@ fun WiFiRadioSetScreen(
             AnimatedContent(
                 targetState = uiState.devices.isNotEmpty(),
                 label = "wifi devices list"
-            ) {
-                if (it) {
+            ) { showDevices ->
+                if (showDevices) {
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        LazyColumn() {
+                        LazyColumn {
                             item {
                                 DevicesListTitle(stringResource(R.string.found_wifi_devices))
                             }
@@ -140,7 +140,7 @@ fun ChatFAB(onClick: () -> Unit, modifier: Modifier = Modifier, iconSize: Dp = 2
 @Preview
 @Composable
 fun Fab() {
-    ChatFAB(onClick = {})
+    ChatFAB(onClick = {}, iconSize = 32.dp)
 }
 
 @Composable

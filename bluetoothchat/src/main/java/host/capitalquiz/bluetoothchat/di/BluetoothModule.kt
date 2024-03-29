@@ -19,8 +19,8 @@ import host.capitalquiz.bluetoothchat.data.communication.DevicesCommunication
 import host.capitalquiz.bluetoothchat.data.devices.BluetoothDevicesRepository
 import host.capitalquiz.bluetoothchat.data.devices.DeviceNameProvider
 import host.capitalquiz.bluetoothchat.data.devices.DevicesClosableDataSource
-import host.capitalquiz.bluetoothchat.data.devices.FoundDevicesReceiver
 import host.capitalquiz.bluetoothchat.data.devices.PairedDevicesDataSource
+import host.capitalquiz.bluetoothchat.data.devices.ScannedDevicesReceiver
 import host.capitalquiz.bluetoothchat.data.messages.MessagesDatabase
 import host.capitalquiz.bluetoothchat.domain.Communication
 import host.capitalquiz.bluetoothchat.domain.ConnectionResult.Mapper
@@ -29,10 +29,6 @@ import host.capitalquiz.bluetoothchat.domain.DevicesRepository
 import host.capitalquiz.bluetoothchat.presentation.ConnectionResultUi
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.ConnectionResultToUiMapper
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.DeviceUi
-import host.capitalquiz.common.di.DispatcherDefault
-import host.capitalquiz.common.di.DispatcherIO
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -46,7 +42,7 @@ interface BluetoothModule {
     @ScannedDevices
     @Binds
     @Singleton
-    fun bindScannedDevicesDataSource(impl: FoundDevicesReceiver): DevicesClosableDataSource
+    fun bindScannedDevicesDataSource(impl: ScannedDevicesReceiver): DevicesClosableDataSource
 
     @Binds
     fun bindBluetoothDevicesRepository(impl: BluetoothDevicesRepository): DevicesRepository
@@ -72,19 +68,10 @@ interface BluetoothModule {
 
 
     companion object {
-        @Singleton
         @Provides
         fun provideBluetoothManager(@ApplicationContext appContext: Context): BluetoothManager? {
             return appContext.getSystemService()
         }
-
-        @DispatcherIO
-        @Provides
-        fun provideDispatcherIO(): CoroutineDispatcher = Dispatchers.IO
-
-        @DispatcherDefault
-        @Provides
-        fun provideDispatcherDefault(): CoroutineDispatcher = Dispatchers.Default
 
         @Provides
         fun provideUiStateMapper(@ApplicationContext context: Context): DeviceMapper<DeviceUi> {

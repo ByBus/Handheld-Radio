@@ -16,10 +16,9 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
-class FoundDevicesReceiver @Inject constructor(
+class ScannedDevicesReceiver @Inject constructor(
     @ApplicationContext private val context: Context,
-) : BroadcastReceiver(),
-    DevicesClosableDataSource {
+) : BroadcastReceiver(), DevicesClosableDataSource {
     private val _foundDevices = MutableStateFlow<List<Device>>(emptyList())
     override val foundDevices = _foundDevices.asStateFlow()
     private var isRegistered = false

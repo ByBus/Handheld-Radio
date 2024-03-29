@@ -29,7 +29,7 @@ import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import host.capitalquiz.bluetoothchat.R
-import host.capitalquiz.bluetoothchat.components.TimedProgressBar
+import host.capitalquiz.bluetoothchat.presentation.devicesscreen.components.TimedProgressBar
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.contracts.EnableBluetoothContract
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.contracts.MakeDiscoverableOverBluetoothContract
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.contracts.RequestAllBluetoothPermissionsContract
