@@ -156,7 +156,7 @@ class WifiConnectionManager @Inject constructor(
 
     private val connectionListener = WifiP2pManager.ConnectionInfoListener { info ->
         val groupOwnerAddress = info.groupOwnerAddress
-        val device = connectedDevice!!
+        val device = connectedDevice ?: WifiDevice("Unknown", "", "Unknown Network")
         if (info.groupFormed && info.isGroupOwner) { //Server
             communication.configureAsServer(device)
         } else if (info.groupFormed) { // Client

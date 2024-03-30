@@ -2,7 +2,6 @@ package host.capitalquiz.wifiradioset.presentation.conversation
 
 import android.content.res.Configuration
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.launch
 import androidx.compose.foundation.Canvas
@@ -44,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import host.capitalquiz.common.SingleEventEffect
+import host.capitalquiz.common.ui.components.DoubleBackPressHandler
 import host.capitalquiz.common.ui.theme.ArduinoBluetoothCommanderTheme
 import host.capitalquiz.wifiradioset.R
 import host.capitalquiz.wifiradioset.presentation.conversation.contracts.RequestMicPermission
@@ -73,12 +73,23 @@ fun ConversationScreen(
     }
 
     SingleEventEffect(sideEffectFlow = viewModel.event) { event ->
-        event.message { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
-            .navigate(onDisconnect).audioSessionReady(viewModel::startAudioVisualization)
+        event
+            .message { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
+            .navigate(onDisconnect)
+            .audioSessionReady(viewModel::startAudioVisualization)
             .connectionReady(viewModel::startConversation)
     }
 
-    BackHandler(enabled = true, onBack = onDisconnect)
+    DoubleBackPressHandler(
+        onFirstPress = {
+            Toast.makeText(
+                context,
+                context.getString(R.string.press_back_button_again_to_leave),
+                Toast.LENGTH_SHORT
+            ).show()
+        },
+        onSecondPress = onDisconnect
+    )
 
     val interactionSource = remember { MutableInteractionSource() }
     val isSpeakButtonPressed by interactionSource.collectIsPressedAsState()
