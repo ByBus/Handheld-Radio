@@ -6,7 +6,7 @@ sealed interface WifiState {
     object Off : WifiState
     data class DevicesFound(val wifiDevices: List<WifiDevice>) : WifiState
     object ConnectionFailed : WifiState
-    object Connected : WifiState
+    data class Connected(val device: WifiDevice) : WifiState
     object Disconnected : WifiState
 
     fun <R> map(mapper: Mapper<R>): R {

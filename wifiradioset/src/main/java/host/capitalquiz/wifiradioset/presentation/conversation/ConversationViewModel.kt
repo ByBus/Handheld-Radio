@@ -2,6 +2,9 @@ package host.capitalquiz.wifiradioset.presentation.conversation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import host.capitalquiz.wifiradioset.domain.Communication
 import host.capitalquiz.wifiradioset.domain.VisualisationProvider
@@ -15,13 +18,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.InputStream
-import javax.inject.Inject
 
 typealias ConnUiResultUi = WiFiConnectionUiResult
 typealias ConnResultUiMapper<R> = WiFiConnectionResult.Mapper<R>
 
-@HiltViewModel
-class ConversationViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = ConversationViewModel.Factory::class)
+class ConversationViewModel @AssistedInject constructor(
+    @Assisted initialState: ConversationUiState,
     private val communication: Communication,
     private val visualisationDataSource: VisualisationProvider,
     private val connectionResultUiMapper: ConnResultUiMapper<ConnUiResultUi>,
@@ -29,7 +32,7 @@ class ConversationViewModel @Inject constructor(
     private val _event = Channel<StreamEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
 
-    private val state = communication.connectionResult
+    val uiState = initialState
 
     private val _frequencies = MutableStateFlow<List<Int>>(emptyList())
     val frequencies = _frequencies.asStateFlow()
@@ -40,7 +43,7 @@ class ConversationViewModel @Inject constructor(
 
     fun connect() {
         viewModelScope.launch {
-            state.collect {
+            communication.connectionResult.collect {
                 _event.trySend(it.map(connectionResultUiMapper).produceEvent())
             }
         }
@@ -84,5 +87,18 @@ class ConversationViewModel @Inject constructor(
     override fun onCleared() {
         communication.stop()
         super.onCleared()
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(initialState: ConversationUiState): ConversationViewModel
+
+        companion object {
+            fun createUiState(
+                deviceName: String,
+                deviceMac: String,
+                networkName: String,
+            ): ConversationUiState = ConversationUiState(deviceName, deviceMac, networkName)
+        }
     }
 }

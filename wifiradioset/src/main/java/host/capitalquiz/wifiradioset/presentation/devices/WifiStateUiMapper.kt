@@ -11,7 +11,7 @@ class WifiStateUiMapper @Inject constructor(
     override fun invoke(wifiState: WifiState): WifiStateUi {
         return when (wifiState) {
             WifiState.Idle -> WifiStateUi.Idle
-            WifiState.Connected -> WifiStateUi.Connected
+            is WifiState.Connected -> WifiStateUi.Connected(wifiState.device)
             WifiState.ConnectionFailed -> WifiStateUi.ConnectionFailed(String(R.string.connection_was_rejected))
             is WifiState.DevicesFound -> WifiStateUi.DevicesFound(wifiState.wifiDevices)
             WifiState.Disconnected -> WifiStateUi.Disconnected(String(R.string.device_was_disconnected))

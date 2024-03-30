@@ -15,7 +15,9 @@ import host.capitalquiz.bluetoothchat.presentation.chatscreen.BluetoothChatScree
 import host.capitalquiz.bluetoothchat.presentation.chatscreen.BluetoothChatViewModel
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.DevicesScreen
 import host.capitalquiz.wifiradioset.presentation.conversation.ConversationScreen
+import host.capitalquiz.wifiradioset.presentation.conversation.ConversationViewModel
 import host.capitalquiz.wifiradioset.presentation.devices.WiFiRadioSetScreen
+import host.capitalquiz.wifiradioset.presentation.conversation.ConversationViewModel.Factory as ConversationVMFactory
 
 @Composable
 fun Navigation(navController: NavHostController = rememberNavController()) {
@@ -36,13 +38,13 @@ fun Navigation(navController: NavHostController = rememberNavController()) {
         composable(
             route = Screens.Chat.route,
             arguments = listOf(
-                navArgument(Screens.Chat.argumentN(0)) {},
-                navArgument(Screens.Chat.argumentN(1)) {})
+                navArgument(Screens.Chat.CHAT_NAME) {},
+                navArgument(Screens.Chat.MAC) {})
         ) { backStackEntry ->
             val chatName =
-                backStackEntry.arguments?.getString(Screens.Chat.argumentN(0)) ?: return@composable
+                backStackEntry.getString(Screens.Chat.CHAT_NAME) ?: return@composable
             val macAddress =
-                backStackEntry.arguments?.getString(Screens.Chat.argumentN(1)) ?: return@composable
+                backStackEntry.getString(Screens.Chat.MAC) ?: return@composable
             val viewModel =
                 hiltViewModel<BluetoothChatViewModel, BluetoothChatViewModel.Factory> { factory ->
                     factory.create(chatName, macAddress)
@@ -65,12 +67,42 @@ fun Navigation(navController: NavHostController = rememberNavController()) {
                 viewModel = hiltViewModel(),
                 shouldDisconnect,
                 openChat = { navController.navigate(Screens.ChatDevices.route) },
-                onConnect = { navController.navigate(Screens.AudioConversation.route) }
+                onConnect = { deviceName, mac, network ->
+                    navController.navigate(
+                        Screens.AudioConversation.route(
+                            deviceName,
+                            mac,
+                            network
+                        )
+                    )
+                }
             )
         }
-        composable(route = Screens.AudioConversation.route) {
+        composable(
+            route = Screens.AudioConversation.route,
+            listOf(
+                navArgument(Screens.AudioConversation.DEVICE_NAME) {},
+                navArgument(Screens.AudioConversation.DEVICE_MAC) {},
+                navArgument(Screens.AudioConversation.NETWORK) {})
+        ) { backStackEntry ->
+            val deviceName =
+                backStackEntry.getString(Screens.AudioConversation.DEVICE_NAME) ?: return@composable
+            val macAddress =
+                backStackEntry.getString(Screens.AudioConversation.DEVICE_MAC) ?: return@composable
+            val networkName =
+                backStackEntry.getString(Screens.AudioConversation.NETWORK) ?: return@composable
+
+            val viewModel =
+                hiltViewModel<ConversationViewModel, ConversationVMFactory> { factory ->
+                    val uiState = ConversationVMFactory.createUiState(
+                        deviceName,
+                        macAddress,
+                        networkName
+                    )
+                    factory.create(uiState)
+                }
             ConversationScreen(
-                viewModel = hiltViewModel(),
+                viewModel = viewModel,
                 onDisconnect = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
                         Screens.RadioSetDevices.DISCONNECT,
@@ -89,4 +121,6 @@ fun <T> NavBackStackEntry.popSavedStateHandleValue(key: String, default: T): T =
     savedStateHandle.getStateFlow(key, default).collectAsState().value.also {
         savedStateHandle.remove<T>(key)
     }
+
+fun NavBackStackEntry.getString(key: String): String? = arguments?.getString(key)
 

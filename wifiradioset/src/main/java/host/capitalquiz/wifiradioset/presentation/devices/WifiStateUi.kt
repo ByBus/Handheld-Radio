@@ -32,8 +32,8 @@ sealed interface WifiStateUi {
         override fun produceEvent(): Event = Event.Toast(message)
     }
 
-    object Connected : BaseWiFiUiState() {
-        override fun produceEvent(): Event = Event.Navigation
+    data class Connected(private val device: WifiDevice) : BaseWiFiUiState() {
+        override fun produceEvent(): Event = Event.ToDeviceNavigation(device)
     }
 
     class Disconnected(private val message: String) : BaseWiFiUiState() {

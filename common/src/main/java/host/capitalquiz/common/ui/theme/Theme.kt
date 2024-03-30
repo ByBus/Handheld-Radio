@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.ui.theme
+package host.capitalquiz.common.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -20,6 +20,7 @@ import host.capitalquiz.common.ui.Purple40
 import host.capitalquiz.common.ui.Purple80
 import host.capitalquiz.common.ui.PurpleGrey40
 import host.capitalquiz.common.ui.PurpleGrey80
+import host.capitalquiz.common.ui.Typography
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,

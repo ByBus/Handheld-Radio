@@ -1,4 +1,4 @@
-package host.capitalquiz.bluetoothchat.presentation.devicesscreen
+package host.capitalquiz.bluetoothchat.presentation.devicesscreen.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
@@ -35,8 +35,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import host.capitalquiz.bluetoothchat.R
+import host.capitalquiz.bluetoothchat.presentation.devicesscreen.BluetoothUiState
+import host.capitalquiz.bluetoothchat.presentation.devicesscreen.DeviceUi
 import host.capitalquiz.common.ui.RedColor
 import host.capitalquiz.common.ui.components.DevicesListTitle
+import host.capitalquiz.common.ui.theme.ArduinoBluetoothCommanderTheme
 
 @Composable
 fun DevicesList(
@@ -145,11 +148,13 @@ fun DevicesList(
 @Preview(backgroundColor = 0xFFFFFFL, showBackground = true)
 @Composable
 fun DevicesListTitlePreview() {
-    Column {
-        DevicesListTitle("Подкдюченные устройства")
-        DeviceItem(
-            device = DeviceUi("Sony Xperia Z1 Compact", "A0:16:F5:24:13"),
-            onClickDevice = {})
+    ArduinoBluetoothCommanderTheme {
+        Column {
+            DevicesListTitle("Подкдюченные устройства")
+            DeviceItem(
+                device = DeviceUi("Sony Xperia Z1 Compact", "A0:16:F5:24:13"),
+                onClickDevice = {})
+        }
     }
 }
 

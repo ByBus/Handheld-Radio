@@ -36,7 +36,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface BluetoothModule {
+interface BluetoothDevicesModule {
 
     @PairedDevices
     @Binds

@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.ui.theme
+package host.capitalquiz.common.ui
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -14,6 +14,11 @@ val Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
+    ),
+    titleMedium = TextStyle(
+        fontFamily = adventProFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 26.sp,
     )
     /* Other default text styles to override
     titleLarge = TextStyle(

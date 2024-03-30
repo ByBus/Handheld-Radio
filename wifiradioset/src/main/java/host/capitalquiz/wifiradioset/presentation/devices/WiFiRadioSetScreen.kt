@@ -60,7 +60,7 @@ fun WiFiRadioSetScreen(
     viewModel: WiFiRadioSetViewModel,
     shouldDisconnect: Boolean,
     openChat: () -> Unit,
-    onConnect: () -> Unit,
+    onConnect: (deviceName: String, mac: String, network: String) -> Unit,
 ) {
     val startDevicesDiscoveryLauncher =
         rememberLauncherForActivityResult(RequestWifiPermissions()) { allowDiscovery ->

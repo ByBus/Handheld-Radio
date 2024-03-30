@@ -1,18 +1,24 @@
 package host.capitalquiz.wifiradioset.presentation.devices
 
-interface BaseEvent {
-    fun navigate(consumer: () -> Unit): Event
+import host.capitalquiz.wifiradioset.domain.WifiDevice
+
+interface SimpleEvent {
+    fun navigate(consumer: (deviceName: String, mac: String, network: String) -> Unit): Event
     fun message(consumer: (String) -> Unit): Event
 }
 
-interface StreamEvent : BaseEvent {
+interface StreamEvent : SimpleEvent {
     fun audioSessionReady(consumer: (Int) -> Unit): Event
     fun connectionReady(consumer: () -> Unit): Event
+    fun navigate(consumer: () -> Unit): Event
 }
 
 interface Event : StreamEvent {
 
     abstract class BaseEvent : Event {
+        override fun navigate(
+            consumer: (deviceName: String, mac: String, network: String) -> Unit,
+        ): Event = this
         override fun navigate(consumer: () -> Unit): Event = this
         override fun message(consumer: (String) -> Unit): Event = this
         override fun audioSessionReady(consumer: (Int) -> Unit): Event = this
@@ -31,6 +37,11 @@ interface Event : StreamEvent {
 
     class ToastWithNavigation(message: String) : Toast(message) {
         override fun navigate(consumer: () -> Unit): Event = this.also { consumer() }
+    }
+
+    class ToDeviceNavigation(private val device: WifiDevice) : BaseEvent() {
+        override fun navigate(consumer: (deviceName: String, mac: String, network: String) -> Unit): Event =
+            this.also { consumer(device.name, device.address, device.groupName) }
     }
 
     class AudioSessionReady(private val sessionId: Int) : BaseEvent() {

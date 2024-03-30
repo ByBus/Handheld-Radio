@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import dagger.hilt.android.AndroidEntryPoint
 import host.capitalquiz.arduinobluetoothcommander.navigation.Navigation
-import host.capitalquiz.arduinobluetoothcommander.ui.theme.ArduinoBluetoothCommanderTheme
+import host.capitalquiz.common.ui.theme.ArduinoBluetoothCommanderTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

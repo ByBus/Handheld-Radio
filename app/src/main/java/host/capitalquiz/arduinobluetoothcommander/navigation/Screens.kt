@@ -1,14 +1,13 @@
 package host.capitalquiz.arduinobluetoothcommander.navigation
 
 interface Screens {
-    fun argumentN(n: Int): String
     val route: String
 
     abstract class BaseScreen(
         protected val baseRoute: String,
         private vararg val arguments: String,
     ) : Screens {
-        override fun argumentN(n: Int): String = arguments[n]
+        protected fun argumentN(n: Int): String = arguments[n]
         protected fun destination(vararg values: String): String =
             "$baseRoute?${formatArgs(arguments, values)}"
 
@@ -40,6 +39,8 @@ interface Screens {
     object ChatDevices : BaseScreen(baseRoute = "devices")
 
     object Chat : BaseScreen(baseRoute = "bluetoothChat", "chatName", "macAddress") {
+        val MAC = argumentN(0)
+        val CHAT_NAME = argumentN(1)
         fun route(chatName: String, macAddress: String): String = destination(chatName, macAddress)
     }
 
@@ -47,5 +48,12 @@ interface Screens {
         const val DISCONNECT = "disconnect"
     }
 
-    object AudioConversation : BaseScreen(baseRoute = "conversation")
+    object AudioConversation :
+        BaseScreen(baseRoute = "conversation", "deviceName", "deviceMac", "deviceNetwork") {
+        val DEVICE_NAME = argumentN(0)
+        val DEVICE_MAC = argumentN(1)
+        val NETWORK = argumentN(2)
+        fun route(deviceName: String, deviceMac: String, network: String): String =
+            destination(deviceName, deviceMac, network)
+    }
 }

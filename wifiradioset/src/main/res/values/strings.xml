@@ -15,4 +15,6 @@
     <string name="enable_speakerphone">Enable speakerphone</string>
     <string name="bluetooth_chat">Bluetooth chat</string>
     <string name="chat">Chat</string>
+    <string name="network">Network</string>
+    <string name="connected_to">Connected to</string>
 </resources>
