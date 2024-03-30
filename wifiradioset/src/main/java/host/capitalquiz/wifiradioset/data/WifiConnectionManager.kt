@@ -8,6 +8,7 @@ import android.net.NetworkInfo
 import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
+import android.net.wifi.p2p.WifiP2pGroup
 import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.WifiP2pManager.ActionListener
 import android.os.Looper
@@ -32,13 +33,12 @@ class WifiConnectionManager @Inject constructor(
     private val channel = wifiManager.initialize(context, Looper.getMainLooper(), null)
     private val _wifiState = MutableStateFlow<WifiState>(WifiState.Idle)
     override val wifiState = _wifiState.asStateFlow()
-    private var connectingDevice: WifiDevice? = null
+    private var connectedDevice: WifiDevice? = null
     private var wifiEnabled = false
     private var wasConnected = false
     private var devices = listOf<WifiDevice>()
 
     override fun onReceive(context: Context?, intent: Intent) {
-        Log.d("WifiConnectionManager", "onReceive: ${intent.action}")
         when (intent.action) {
             WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION -> {
                 val state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1)
@@ -54,7 +54,16 @@ class WifiConnectionManager @Inject constructor(
 
             WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
                 val networkInfo = intent.getExtra<NetworkInfo>(WifiP2pManager.EXTRA_NETWORK_INFO)
+                val p2pGroup = intent.getExtra<WifiP2pGroup>(WifiP2pManager.EXTRA_WIFI_P2P_GROUP)
+
                 if (networkInfo?.isConnected == true) {
+                    p2pGroup?.let { group ->
+                        connectedDevice = if (group.isGroupOwner) {
+                            group.clientList.first { it.status == WifiP2pDevice.CONNECTED }
+                        } else {
+                            group.owner
+                        }?.toWifiDevice(group.networkName)
+                    }
                     wasConnected = true
                     wifiManager.requestConnectionInfo(channel, connectionListener)
                 } else {
@@ -76,7 +85,6 @@ class WifiConnectionManager @Inject constructor(
             }
         }
     }
-
 
     override fun init() {
         if (isRegistered.not()) {
@@ -117,7 +125,6 @@ class WifiConnectionManager @Inject constructor(
     }
 
     override fun connect(device: WifiDevice) {
-        connectingDevice = device
         val config = WifiP2pConfig().apply {
             deviceAddress = device.address
             wps.setup = WpsInfo.PBC
@@ -129,7 +136,6 @@ class WifiConnectionManager @Inject constructor(
             }
 
             override fun onFailure(reason: Int) {
-                connectingDevice = null
                 _wifiState.update { WifiState.ConnectionFailed }
             }
         })
@@ -150,19 +156,16 @@ class WifiConnectionManager @Inject constructor(
 
     private val connectionListener = WifiP2pManager.ConnectionInfoListener { info ->
         val groupOwnerAddress = info.groupOwnerAddress
+        val device = connectedDevice!!
         if (info.groupFormed && info.isGroupOwner) { //Server
-            communication.configureAsServer(connectingDevice ?: WifiDevice("Client", ""))
+            communication.configureAsServer(device)
         } else if (info.groupFormed) { // Client
-            communication.configureAsClient(
-                connectingDevice ?: WifiDevice(
-                    "Server",
-                    groupOwnerAddress.hostAddress.takeOrEmpty()
-                ), groupOwnerAddress
-            )
+            communication.configureAsClient(device, groupOwnerAddress)
         }
-        _wifiState.update { WifiState.Connected }
+        _wifiState.update { WifiState.Connected(device) }
     }
 }
 
-private fun WifiP2pDevice.toWifiDevice(): WifiDevice = WifiDevice(deviceName, deviceAddress)
-private fun String?.takeOrEmpty() = this ?: ""
+private fun WifiP2pDevice.toWifiDevice(groupName: String? = null): WifiDevice =
+    WifiDevice(deviceName, deviceAddress, groupName ?: "")
+
