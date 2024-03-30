@@ -4,18 +4,13 @@ import android.content.res.Configuration
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.launch
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,16 +24,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -46,6 +37,8 @@ import host.capitalquiz.common.SingleEventEffect
 import host.capitalquiz.common.ui.components.DoubleBackPressHandler
 import host.capitalquiz.common.ui.theme.ArduinoBluetoothCommanderTheme
 import host.capitalquiz.wifiradioset.R
+import host.capitalquiz.wifiradioset.presentation.conversation.components.Histogram
+import host.capitalquiz.wifiradioset.presentation.conversation.components.RoundButton
 import host.capitalquiz.wifiradioset.presentation.conversation.contracts.RequestMicPermission
 
 @Composable
@@ -81,13 +74,7 @@ fun ConversationScreen(
     }
 
     DoubleBackPressHandler(
-        onFirstPress = {
-            Toast.makeText(
-                context,
-                context.getString(R.string.press_back_button_again_to_leave),
-                Toast.LENGTH_SHORT
-            ).show()
-        },
+        onFirstPress = { viewModel.showToast(context.getString(R.string.press_back_button_again_to_leave)) },
         onSecondPress = onDisconnect
     )
 
@@ -237,33 +224,6 @@ private fun ConversationUi(
     }
 }
 
-@Composable
-fun RoundButton(
-    icon: Painter,
-    iconSize: Dp,
-    modifier: Modifier,
-    contentDescription: String,
-    onClick: () -> Unit = {},
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    padding: Dp = 12.dp,
-    tint: Color = Color.Unspecified,
-) {
-    Button(
-        shape = CircleShape,
-        onClick = onClick,
-        modifier = modifier,
-        contentPadding = PaddingValues(padding),
-        interactionSource = interactionSource
-    ) {
-        Icon(
-            painter = icon,
-            modifier = Modifier.size(iconSize),
-            tint = tint,
-            contentDescription = contentDescription
-        )
-    }
-}
-
 @Preview(name = "Conversation")
 @Composable
 fun ConversationUiPreview() {
@@ -301,36 +261,3 @@ fun ConversationUiPreviewLanScape() {
 }
 
 
-@Composable
-fun Histogram(
-    values: List<Int>,
-    binWidth: Dp = Dp.Unspecified,
-    binFactor: Float = 0.8f,
-    color: Color,
-    symmetric: Boolean = false,
-    flip: Boolean = false,
-    modifier: Modifier,
-) {
-    Box(modifier = modifier) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val items = if (flip) values.reversed() else values
-            val middleY = size.height / 2
-            val middleIndex = values.size shr 1
-            val step = size.width / values.size
-            val strokeWidth = if (binWidth == Dp.Unspecified) step * binFactor else binWidth.toPx()
-            var left = step / 2
-            for (i in items.indices) {
-                val half =
-                    (if (symmetric && i > middleIndex) items[middleIndex - (i - middleIndex)] else items[i]) / 2
-                drawLine(
-                    start = Offset(x = left, y = middleY + half.coerceAtLeast(1)),
-                    end = Offset(x = left, y = middleY - half.coerceAtLeast(1)),
-                    color = color,
-                    strokeWidth = strokeWidth,
-                    cap = StrokeCap.Round
-                )
-                left += step
-            }
-        }
-    }
-}

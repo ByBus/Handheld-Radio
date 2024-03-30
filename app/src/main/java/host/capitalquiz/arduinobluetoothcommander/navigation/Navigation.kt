@@ -16,6 +16,7 @@ import host.capitalquiz.bluetoothchat.presentation.chatscreen.BluetoothChatViewM
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.DevicesScreen
 import host.capitalquiz.wifiradioset.presentation.conversation.ConversationScreen
 import host.capitalquiz.wifiradioset.presentation.conversation.ConversationViewModel
+import host.capitalquiz.wifiradioset.presentation.conversation.ConversationViewModel.Factory.Companion.create
 import host.capitalquiz.wifiradioset.presentation.devices.WiFiRadioSetScreen
 import host.capitalquiz.wifiradioset.presentation.conversation.ConversationViewModel.Factory as ConversationVMFactory
 
@@ -51,8 +52,6 @@ fun Navigation(navController: NavHostController = rememberNavController()) {
                 }
             BluetoothChatScreen(
                 viewModel = viewModel,
-                chatName = chatName,
-                deviceMac = macAddress,
                 onDisconnect = navController::popBackStack
             )
         }
@@ -69,11 +68,7 @@ fun Navigation(navController: NavHostController = rememberNavController()) {
                 openChat = { navController.navigate(Screens.ChatDevices.route) },
                 onConnect = { deviceName, mac, network ->
                     navController.navigate(
-                        Screens.AudioConversation.route(
-                            deviceName,
-                            mac,
-                            network
-                        )
+                        Screens.AudioConversation.route(deviceName, mac, network)
                     )
                 }
             )
@@ -94,12 +89,7 @@ fun Navigation(navController: NavHostController = rememberNavController()) {
 
             val viewModel =
                 hiltViewModel<ConversationViewModel, ConversationVMFactory> { factory ->
-                    val uiState = ConversationVMFactory.createUiState(
-                        deviceName,
-                        macAddress,
-                        networkName
-                    )
-                    factory.create(uiState)
+                    factory.create(deviceName, macAddress, networkName)
                 }
             ConversationScreen(
                 viewModel = viewModel,

@@ -10,6 +10,7 @@ import host.capitalquiz.wifiradioset.domain.Communication
 import host.capitalquiz.wifiradioset.domain.VisualisationProvider
 import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
 import host.capitalquiz.wifiradioset.domain.toMagnitudes
+import host.capitalquiz.wifiradioset.presentation.devices.Event
 import host.capitalquiz.wifiradioset.presentation.devices.StreamEvent
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,15 +20,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.InputStream
 
-typealias ConnUiResultUi = WiFiConnectionUiResult
-typealias ConnResultUiMapper<R> = WiFiConnectionResult.Mapper<R>
-
 @HiltViewModel(assistedFactory = ConversationViewModel.Factory::class)
 class ConversationViewModel @AssistedInject constructor(
     @Assisted initialState: ConversationUiState,
     private val communication: Communication,
     private val visualisationDataSource: VisualisationProvider,
-    private val connectionResultUiMapper: ConnResultUiMapper<ConnUiResultUi>,
+    private val connectionResultToEventMapper: WiFiConnectionResult.Mapper<Event>,
 ) : ViewModel() {
     private val _event = Channel<StreamEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
@@ -44,7 +42,7 @@ class ConversationViewModel @AssistedInject constructor(
     fun connect() {
         viewModelScope.launch {
             communication.connectionResult.collect {
-                _event.trySend(it.map(connectionResultUiMapper).produceEvent())
+                _event.trySend(it.map(connectionResultToEventMapper))
             }
         }
     }
@@ -89,16 +87,21 @@ class ConversationViewModel @AssistedInject constructor(
         super.onCleared()
     }
 
+    fun showToast(text: String) {
+        _event.trySend(Event.Toast(text))
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(initialState: ConversationUiState): ConversationViewModel
 
         companion object {
-            fun createUiState(
+            fun Factory.create(
                 deviceName: String,
                 deviceMac: String,
                 networkName: String,
-            ): ConversationUiState = ConversationUiState(deviceName, deviceMac, networkName)
+            ): ConversationViewModel =
+                create(ConversationUiState(deviceName, deviceMac, networkName))
         }
     }
 }

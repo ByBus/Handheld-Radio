@@ -25,7 +25,6 @@ interface ConnectionResultUi {
         ).also {
             message?.let(toastConsumer::invoke)
         }
-
     }
 
     object Idle : Base() {

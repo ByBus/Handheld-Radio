@@ -32,8 +32,8 @@ import host.capitalquiz.wifiradioset.domain.RadioSetRepository
 import host.capitalquiz.wifiradioset.domain.VisualisationProvider
 import host.capitalquiz.wifiradioset.domain.WiFiConnectionResult
 import host.capitalquiz.wifiradioset.domain.WifiState
-import host.capitalquiz.wifiradioset.presentation.conversation.WiFiConnectionUiResult
-import host.capitalquiz.wifiradioset.presentation.conversation.WiFiConnectionUiResultMapper
+import host.capitalquiz.wifiradioset.presentation.conversation.WiFiConnectionUiResultToEventMapper
+import host.capitalquiz.wifiradioset.presentation.devices.Event
 import host.capitalquiz.wifiradioset.presentation.devices.WifiStateUi
 import host.capitalquiz.wifiradioset.presentation.devices.WifiStateUiMapper
 import kotlinx.coroutines.CoroutineDispatcher
@@ -55,7 +55,7 @@ interface WiFIModule {
     fun bindWiFiStateUiMapper(impl: WifiStateUiMapper): WifiState.Mapper<WifiStateUi>
 
     @Binds
-    fun bindWiFiConnectionMapper(impl: WiFiConnectionUiResultMapper): WiFiConnectionResult.Mapper<WiFiConnectionUiResult>
+    fun bindWiFiConnectionMapper(impl: WiFiConnectionUiResultToEventMapper): WiFiConnectionResult.Mapper<Event>
 
     @Binds
     fun bindAudioVisualisationDataProvider(impl: AudioSessionFrequenciesProvider): VisualisationProvider
