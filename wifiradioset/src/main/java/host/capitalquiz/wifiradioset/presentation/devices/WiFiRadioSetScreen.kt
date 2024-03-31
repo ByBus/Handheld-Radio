@@ -59,8 +59,8 @@ fun WiFiRadioSetScreen(
     onConnect: (deviceName: String, mac: String, network: String) -> Unit,
 ) {
     val startDevicesDiscoveryLauncher =
-        rememberLauncherForActivityResult(RequestWifiPermissions()) { allowDiscovery ->
-            if (allowDiscovery) viewModel.findDevices()
+        rememberLauncherForActivityResult(RequestWifiPermissions()) { result ->
+            result.check(onGranted = viewModel::findDevices)
         }
     val uiState by viewModel.uiState.collectAsState()
 
@@ -75,6 +75,7 @@ fun WiFiRadioSetScreen(
     LaunchedEffect(shouldDisconnect) {
         if (shouldDisconnect) viewModel.disconnect()
     }
+
     Scaffold(
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = { ChatFAB(openChat, iconSize = 32.dp) }

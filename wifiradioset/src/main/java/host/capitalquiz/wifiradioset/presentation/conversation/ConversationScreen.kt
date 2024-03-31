@@ -49,12 +49,11 @@ fun ConversationScreen(
     val context = LocalContext.current
 
     val micPermissionContract =
-        rememberLauncherForActivityResult(RequestMicPermission()) { allowRecord ->
-            if (allowRecord) {
-                viewModel.connect()
-            } else {
-                onDisconnect()
-            }
+        rememberLauncherForActivityResult(RequestMicPermission()) { result ->
+            result.check(
+                onGranted = viewModel::connect,
+                onRejected = { onDisconnect() }
+            )
         }
 
     var askPermission by rememberSaveable { mutableStateOf(true) }
@@ -78,10 +77,10 @@ fun ConversationScreen(
         onSecondPress = onDisconnect
     )
 
-    val interactionSource = remember { MutableInteractionSource() }
-    val isSpeakButtonPressed by interactionSource.collectIsPressedAsState()
     val uiState = viewModel.uiState
     val histogramValues by viewModel.frequencies.collectAsState()
+    val interactionSource = remember { MutableInteractionSource() }
+    val isSpeakButtonPressed by interactionSource.collectIsPressedAsState()
 
     LaunchedEffect(isSpeakButtonPressed) {
         if (isSpeakButtonPressed) {

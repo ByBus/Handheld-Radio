@@ -34,6 +34,7 @@ import host.capitalquiz.bluetoothchat.presentation.devicesscreen.components.Time
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.contracts.EnableBluetoothContract
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.contracts.MakeDiscoverableOverBluetoothContract
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.contracts.RequestAllBluetoothPermissionsContract
+import host.capitalquiz.common.presentation.contracts.PermissionResult
 
 @Composable
 fun DevicesScreen(
@@ -56,8 +57,8 @@ fun DevicesScreen(
 
     val permissionLauncher = rememberLauncherForActivityResult(
         RequestAllBluetoothPermissionsContract()
-    ) { canEnableBT ->
-        if (canEnableBT) enableBluetoothLauncher.launch()
+    ) { result ->
+        result.check(onGranted = enableBluetoothLauncher::launch)
     }
 
     var btEnableActivityLaunched by rememberSaveable { mutableStateOf(false) }
@@ -126,7 +127,7 @@ fun DevicesScreen(
     }
 }
 
-private fun ManagedActivityResultLauncher<Unit, Boolean>.launch(
+private fun ManagedActivityResultLauncher<Unit, PermissionResult>.launch(
     commandHolder: MutableState<(() -> Unit)?>,
     block: (() -> Unit)?,
 ) {

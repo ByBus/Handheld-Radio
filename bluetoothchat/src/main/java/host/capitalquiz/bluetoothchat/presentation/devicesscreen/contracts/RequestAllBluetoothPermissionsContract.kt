@@ -4,7 +4,7 @@ import android.Manifest
 import android.os.Build
 import host.capitalquiz.common.presentation.contracts.MultiplePermissionsContract
 
-class RequestAllBluetoothPermissionsContract : MultiplePermissionsContract() {
+class RequestAllBluetoothPermissionsContract : MultiplePermissionsContract("", "") {
     override val permissions =
         arrayOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
