@@ -39,8 +39,8 @@ interface Screens {
     object ChatDevices : BaseScreen(baseRoute = "devices")
 
     object Chat : BaseScreen(baseRoute = "bluetoothChat", "chatName", "macAddress") {
-        val MAC = argumentN(0)
-        val CHAT_NAME = argumentN(1)
+        val CHAT_NAME = argumentN(0)
+        val MAC = argumentN(1)
         fun route(chatName: String, macAddress: String): String = destination(chatName, macAddress)
     }
 
