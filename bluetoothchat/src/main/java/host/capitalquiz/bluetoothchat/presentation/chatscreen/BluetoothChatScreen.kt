@@ -114,7 +114,7 @@ fun BluetoothChatScreen(
                 .fillMaxSize()
                 .padding(innerPadding),
             state = listState,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            verticalArrangement = Arrangement.Bottom,
         ) {
             items(items = uiState.messages, key = { it.id }) { message ->
                 ChatMessage(

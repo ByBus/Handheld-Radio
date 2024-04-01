@@ -82,13 +82,13 @@ class ConversationViewModel @AssistedInject constructor(
         }
     }
 
+    fun showToast(text: String) {
+        _event.trySend(Event.Toast(text))
+    }
+
     override fun onCleared() {
         communication.stop()
         super.onCleared()
-    }
-
-    fun showToast(text: String) {
-        _event.trySend(Event.Toast(text))
     }
 
     @AssistedFactory

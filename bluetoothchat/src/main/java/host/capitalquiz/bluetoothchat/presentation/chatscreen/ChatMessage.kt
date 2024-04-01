@@ -39,7 +39,7 @@ fun ChatMessage(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 2.dp),
+            .padding(horizontal = 2.dp, vertical = 1.dp),
         horizontalArrangement = gravity
     ) {
         Column(

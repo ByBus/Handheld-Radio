@@ -1,7 +1,7 @@
 package host.capitalquiz.bluetoothchat.data.communication
 
 import android.bluetooth.BluetoothSocket
-import host.capitalquiz.bluetoothchat.data.Closable
+import host.capitalquiz.common.data.Closable
 
 interface SocketHolder : Closable {
     var socket: BluetoothSocket?

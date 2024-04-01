@@ -18,7 +18,6 @@ import host.capitalquiz.wifiradioset.presentation.conversation.ConversationScree
 import host.capitalquiz.wifiradioset.presentation.conversation.ConversationViewModel
 import host.capitalquiz.wifiradioset.presentation.conversation.ConversationViewModel.Factory.Companion.create
 import host.capitalquiz.wifiradioset.presentation.devices.WiFiRadioSetScreen
-import host.capitalquiz.wifiradioset.presentation.conversation.ConversationViewModel.Factory as ConversationVMFactory
 
 @Composable
 fun Navigation(navController: NavHostController = rememberNavController()) {
@@ -88,7 +87,7 @@ fun Navigation(navController: NavHostController = rememberNavController()) {
                 backStackEntry.getString(Screens.AudioConversation.NETWORK) ?: return@composable
 
             val viewModel =
-                hiltViewModel<ConversationViewModel, ConversationVMFactory> { factory ->
+                hiltViewModel<ConversationViewModel, ConversationViewModel.Factory> { factory ->
                     factory.create(deviceName, macAddress, networkName)
                 }
             ConversationScreen(

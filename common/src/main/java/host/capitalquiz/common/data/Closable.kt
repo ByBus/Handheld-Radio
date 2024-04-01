@@ -1,4 +1,4 @@
-package host.capitalquiz.bluetoothchat.data
+package host.capitalquiz.common.data
 
 interface Closable {
     fun init()
