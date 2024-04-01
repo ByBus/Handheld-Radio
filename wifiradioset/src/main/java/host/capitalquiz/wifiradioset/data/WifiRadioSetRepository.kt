@@ -12,7 +12,7 @@ class WifiRadioSetRepository @Inject constructor(
     private val locationStateDataSource: StateDataSource<LocationState>,
 ) : RadioSetRepository {
     override val wifiState: Flow<WifiState> = combine(
-        connectionManager.wifiState,
+        connectionManager.state,
         locationStateDataSource.state
     ) { wifiState, locationState ->
         if (locationState.isEnabled()) wifiState else WifiState.Off

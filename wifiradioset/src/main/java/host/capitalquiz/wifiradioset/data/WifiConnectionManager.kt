@@ -32,7 +32,7 @@ class WifiConnectionManager @Inject constructor(
     private var isRegistered = false
     private val channel = wifiManager.initialize(context, Looper.getMainLooper(), null)
     private val _wifiState = MutableStateFlow<WifiState>(WifiState.Idle)
-    override val wifiState = _wifiState.asStateFlow()
+    override val state = _wifiState.asStateFlow()
     private var connectedDevice: WifiDevice? = null
     private var wifiEnabled = false
     private var wasConnected = false
