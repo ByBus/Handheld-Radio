@@ -1,7 +1,7 @@
 package host.capitalquiz.wifiradioset.di
 
 import android.content.Context
-import android.net.ConnectivityManager
+import android.location.LocationManager
 import android.net.wifi.WifiManager
 import android.net.wifi.p2p.WifiP2pManager
 import androidx.core.content.getSystemService
@@ -17,7 +17,9 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import host.capitalquiz.common.di.DispatcherIO
 import host.capitalquiz.wifiradioset.R
 import host.capitalquiz.wifiradioset.data.ConnectionManager
+import host.capitalquiz.wifiradioset.data.LocationState
 import host.capitalquiz.wifiradioset.data.NetworkChecker
+import host.capitalquiz.wifiradioset.data.StateDataSource
 import host.capitalquiz.wifiradioset.data.WifiConnectionManager
 import host.capitalquiz.wifiradioset.data.WifiRadioSetRepository
 import host.capitalquiz.wifiradioset.data.communication.AudioPlayer
@@ -60,6 +62,9 @@ interface WiFIModule {
     @Binds
     fun bindAudioVisualisationDataProvider(impl: AudioSessionFrequenciesProvider): VisualisationProvider
 
+    @Binds
+    fun bindLocationStateDataSource(impl: StateDataSource.LocationStateDataSource): StateDataSource<LocationState>
+
     companion object {
         @Provides
         @ViewModelScoped
@@ -71,7 +76,7 @@ interface WiFIModule {
             context.getSystemService()!!
 
         @Provides
-        fun provideConnectivityManager(@ApplicationContext context: Context): ConnectivityManager =
+        fun provideLocationManager(@ApplicationContext context: Context): LocationManager =
             context.getSystemService()!!
 
     }

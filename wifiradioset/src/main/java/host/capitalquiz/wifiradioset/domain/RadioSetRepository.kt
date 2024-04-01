@@ -1,9 +1,9 @@
 package host.capitalquiz.wifiradioset.domain
 
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 
 interface RadioSetRepository {
-    val wifiState: StateFlow<WifiState>
+    val wifiState: Flow<WifiState>
     fun startDeviceDiscovering()
     fun connect(device: WifiDevice)
     fun disconnect()
