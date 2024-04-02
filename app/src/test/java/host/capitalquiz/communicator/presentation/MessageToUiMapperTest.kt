@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.presentation
+package host.capitalquiz.communicator.presentation
 
 import host.capitalquiz.bluetoothchat.domain.Message
 import host.capitalquiz.bluetoothchat.presentation.chatscreen.CurrentTimeProvider

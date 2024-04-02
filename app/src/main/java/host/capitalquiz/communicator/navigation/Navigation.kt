@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.navigation
+package host.capitalquiz.communicator.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable

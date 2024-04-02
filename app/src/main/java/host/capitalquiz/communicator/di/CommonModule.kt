@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.di
+package host.capitalquiz.communicator.di
 
 import dagger.Module
 import dagger.Provides

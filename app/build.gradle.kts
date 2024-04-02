@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "host.capitalquiz.arduinobluetoothcommander"
+    namespace = "host.capitalquiz.communicator"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "host.capitalquiz.arduinobluetoothcommander"
+        applicationId = "host.capitalquiz.communicator"
         minSdk = 22
         targetSdk = 34
         versionCode = 1

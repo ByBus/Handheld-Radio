@@ -1,4 +1,4 @@
-package host.capitalquiz.arduinobluetoothcommander.navigation
+package host.capitalquiz.communicator.navigation
 
 interface Screens {
     val route: String
