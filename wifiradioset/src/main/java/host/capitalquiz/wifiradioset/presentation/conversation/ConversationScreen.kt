@@ -52,7 +52,7 @@ fun ConversationScreen(
         rememberLauncherForActivityResult(RequestMicPermission()) { result ->
             result.check(
                 onGranted = viewModel::connect,
-                onRejected = { onDisconnect() }
+                onRejected = onDisconnect
             )
         }
 

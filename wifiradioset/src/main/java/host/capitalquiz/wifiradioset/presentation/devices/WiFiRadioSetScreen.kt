@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -50,7 +49,6 @@ import host.capitalquiz.wifiradioset.presentation.devices.components.DeviceItem
 import host.capitalquiz.wifiradioset.presentation.devices.contracts.RequestWifiPermissions
 import values.CloudShape
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WiFiRadioSetScreen(
     viewModel: WiFiRadioSetViewModel,

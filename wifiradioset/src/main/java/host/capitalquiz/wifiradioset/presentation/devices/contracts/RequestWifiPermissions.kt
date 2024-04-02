@@ -4,7 +4,7 @@ import android.Manifest
 import android.os.Build
 import host.capitalquiz.common.presentation.contracts.MultiplePermissionsContract
 
-class RequestWifiPermissions : MultiplePermissionsContract("", "") {
+class RequestWifiPermissions : MultiplePermissionsContract() {
     override val permissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
 //        Manifest.permission.ACCESS_NETWORK_STATE,
