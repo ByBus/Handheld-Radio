@@ -10,15 +10,15 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestMultiple
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions.Companion.EXTRA_PERMISSION_GRANT_RESULTS
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import java.lang.ref.WeakReference
+import host.capitalquiz.common.core.WeakReferenceDelegate
 
 
 abstract class MultiplePermissionsContract : ActivityResultContract<Unit, PermissionResult>() {
     protected abstract val permissions: Array<String>
-    private var activity = WeakReference<Activity>(null)
+    private var activity by WeakReferenceDelegate<Activity>()
 
     override fun createIntent(context: Context, input: Unit): Intent {
-        activity = WeakReference(context as Activity)
+        activity = context as Activity
         return Intent(ACTION_REQUEST_PERMISSIONS)
             .putExtra(
                 EXTRA_PERMISSIONS,
@@ -34,7 +34,7 @@ abstract class MultiplePermissionsContract : ActivityResultContract<Unit, Permis
 
         return PermissionResult(
             isGranted = granted,
-            isShowRationale = activity.get()?.let { shouldShowRationale(it) } ?: true
+            isShowRationale = activity?.let { shouldShowRationale(it) } ?: true
         )
     }
 
