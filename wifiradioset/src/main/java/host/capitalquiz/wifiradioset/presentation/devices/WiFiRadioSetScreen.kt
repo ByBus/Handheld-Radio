@@ -43,11 +43,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import host.capitalquiz.common.SingleEventEffect
+import host.capitalquiz.common.ui.CloudShape
 import host.capitalquiz.common.ui.components.DevicesListTitle
 import host.capitalquiz.wifiradioset.R
 import host.capitalquiz.wifiradioset.presentation.devices.components.DeviceItem
 import host.capitalquiz.wifiradioset.presentation.devices.contracts.RequestWifiPermissions
-import values.CloudShape
 
 @Composable
 fun WiFiRadioSetScreen(
