@@ -3,7 +3,7 @@ package host.capitalquiz.bluetoothchat.data.messages
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import host.capitalquiz.bluetoothchat.domain.Message
+import host.capitalquiz.bluetoothchat.domain.chat.Message
 
 @Entity(tableName = "messages")
 data class MessageEntity(

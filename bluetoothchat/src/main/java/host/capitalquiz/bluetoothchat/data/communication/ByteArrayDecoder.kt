@@ -1,7 +1,7 @@
 package host.capitalquiz.bluetoothchat.data.communication
 
-import host.capitalquiz.bluetoothchat.domain.BluetoothMessage
-import host.capitalquiz.bluetoothchat.domain.BluetoothMessageMapper
+import host.capitalquiz.bluetoothchat.domain.chat.BluetoothMessage
+import host.capitalquiz.bluetoothchat.domain.chat.BluetoothMessageMapper
 import java.nio.ByteBuffer
 import javax.inject.Inject
 

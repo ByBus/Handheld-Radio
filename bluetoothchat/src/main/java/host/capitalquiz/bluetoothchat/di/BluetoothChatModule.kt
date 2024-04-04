@@ -13,8 +13,8 @@ import host.capitalquiz.bluetoothchat.data.messages.MessagesDao
 import host.capitalquiz.bluetoothchat.data.messages.MessagesDataSource
 import host.capitalquiz.bluetoothchat.data.messages.MessagesDatabase
 import host.capitalquiz.bluetoothchat.domain.ConnectionResult
-import host.capitalquiz.bluetoothchat.domain.MessageMapper
-import host.capitalquiz.bluetoothchat.domain.MessagesRepository
+import host.capitalquiz.bluetoothchat.domain.chat.MessageMapper
+import host.capitalquiz.bluetoothchat.domain.chat.MessagesRepository
 import host.capitalquiz.bluetoothchat.presentation.chatscreen.ChatConnectionUi
 import host.capitalquiz.bluetoothchat.presentation.chatscreen.CurrentTimeProvider
 import host.capitalquiz.bluetoothchat.presentation.chatscreen.MessageUi

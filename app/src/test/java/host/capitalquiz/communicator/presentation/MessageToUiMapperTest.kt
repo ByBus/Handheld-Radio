@@ -1,6 +1,6 @@
 package host.capitalquiz.communicator.presentation
 
-import host.capitalquiz.bluetoothchat.domain.Message
+import host.capitalquiz.bluetoothchat.domain.chat.Message
 import host.capitalquiz.bluetoothchat.presentation.chatscreen.CurrentTimeProvider
 import host.capitalquiz.bluetoothchat.presentation.chatscreen.MessageUi
 import host.capitalquiz.bluetoothchat.presentation.chatscreen.mappers.MessageToUiMapper

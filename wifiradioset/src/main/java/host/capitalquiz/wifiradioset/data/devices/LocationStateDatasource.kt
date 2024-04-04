@@ -1,4 +1,4 @@
-package host.capitalquiz.wifiradioset.data
+package host.capitalquiz.wifiradioset.data.devices
 
 import android.content.BroadcastReceiver
 import android.content.Context

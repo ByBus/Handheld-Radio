@@ -1,5 +1,7 @@
 package host.capitalquiz.bluetoothchat.domain
 
+import host.capitalquiz.bluetoothchat.domain.devices.Device
+
 sealed interface ConnectionResult {
     fun <R> map(mapper: Mapper<R>): R = mapper(this)
     fun abortErrorOrSelf() = this

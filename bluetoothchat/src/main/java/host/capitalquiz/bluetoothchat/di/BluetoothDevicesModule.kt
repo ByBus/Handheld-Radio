@@ -25,8 +25,8 @@ import host.capitalquiz.bluetoothchat.data.devices.ScannedDevicesReceiver
 import host.capitalquiz.bluetoothchat.data.messages.MessagesDatabase
 import host.capitalquiz.bluetoothchat.domain.Communication
 import host.capitalquiz.bluetoothchat.domain.ConnectionResult.Mapper
-import host.capitalquiz.bluetoothchat.domain.DeviceMapper
-import host.capitalquiz.bluetoothchat.domain.DevicesRepository
+import host.capitalquiz.bluetoothchat.domain.devices.DeviceMapper
+import host.capitalquiz.bluetoothchat.domain.devices.DevicesRepository
 import host.capitalquiz.bluetoothchat.domain.InstanceProvider
 import host.capitalquiz.bluetoothchat.domain.SingletonFactory
 import host.capitalquiz.bluetoothchat.presentation.ConnectionResultUi

@@ -2,10 +2,10 @@ package host.capitalquiz.bluetoothchat.data.communication
 
 import android.annotation.SuppressLint
 import host.capitalquiz.bluetoothchat.data.toDevice
-import host.capitalquiz.bluetoothchat.domain.BluetoothMessage
+import host.capitalquiz.bluetoothchat.domain.chat.BluetoothMessage
 import host.capitalquiz.bluetoothchat.domain.Communication
 import host.capitalquiz.bluetoothchat.domain.ConnectionResult
-import host.capitalquiz.bluetoothchat.domain.Device
+import host.capitalquiz.bluetoothchat.domain.devices.Device
 import host.capitalquiz.common.di.DispatcherIO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

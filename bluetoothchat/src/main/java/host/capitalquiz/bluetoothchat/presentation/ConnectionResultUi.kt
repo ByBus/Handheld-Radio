@@ -1,6 +1,6 @@
 package host.capitalquiz.bluetoothchat.presentation
 
-import host.capitalquiz.bluetoothchat.domain.Device
+import host.capitalquiz.bluetoothchat.domain.devices.Device
 import host.capitalquiz.bluetoothchat.presentation.devicesscreen.BluetoothUiState
 
 interface ConnectionResultUi {

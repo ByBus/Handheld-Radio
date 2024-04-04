@@ -1,4 +1,4 @@
-package host.capitalquiz.bluetoothchat.domain
+package host.capitalquiz.bluetoothchat.domain.chat
 
 import java.nio.ByteBuffer
 

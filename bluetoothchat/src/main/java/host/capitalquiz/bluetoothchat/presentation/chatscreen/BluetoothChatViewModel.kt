@@ -9,10 +9,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import host.capitalquiz.bluetoothchat.domain.Communication
 import host.capitalquiz.bluetoothchat.domain.ConnectionResult
 import host.capitalquiz.bluetoothchat.domain.InstanceProvider
-import host.capitalquiz.bluetoothchat.domain.Message
-import host.capitalquiz.bluetoothchat.domain.MessageMapper
-import host.capitalquiz.bluetoothchat.domain.MessagesRepository
-import host.capitalquiz.bluetoothchat.domain.mapItems
+import host.capitalquiz.bluetoothchat.domain.chat.Message
+import host.capitalquiz.bluetoothchat.domain.chat.MessageMapper
+import host.capitalquiz.bluetoothchat.domain.chat.MessagesRepository
+import host.capitalquiz.bluetoothchat.domain.chat.mapItems
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine

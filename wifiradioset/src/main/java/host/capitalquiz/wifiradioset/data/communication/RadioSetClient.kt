@@ -12,6 +12,7 @@ import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
 import javax.inject.Inject
+import host.capitalquiz.common.catchException
 
 interface RadioSetClient : RadioSetSocketHolder {
 
@@ -36,9 +37,8 @@ interface RadioSetClient : RadioSetSocketHolder {
         }.flowOn(dispatcher)
 
         override fun close() {
-            try {
+            catchException<IOException> {
                 socket.close()
-            } catch (_: IOException) {
             }
         }
 

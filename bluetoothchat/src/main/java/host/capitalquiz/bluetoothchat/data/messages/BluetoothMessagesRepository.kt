@@ -2,11 +2,11 @@ package host.capitalquiz.bluetoothchat.data.messages
 
 import host.capitalquiz.bluetoothchat.data.devices.DeviceNameProvider
 import host.capitalquiz.bluetoothchat.data.toBluetoothMessage
-import host.capitalquiz.bluetoothchat.domain.Chat
+import host.capitalquiz.bluetoothchat.domain.chat.Chat
 import host.capitalquiz.bluetoothchat.domain.Communication
 import host.capitalquiz.bluetoothchat.domain.InstanceProvider
-import host.capitalquiz.bluetoothchat.domain.Message
-import host.capitalquiz.bluetoothchat.domain.MessagesRepository
+import host.capitalquiz.bluetoothchat.domain.chat.Message
+import host.capitalquiz.bluetoothchat.domain.chat.MessagesRepository
 import host.capitalquiz.common.di.DispatcherIO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi

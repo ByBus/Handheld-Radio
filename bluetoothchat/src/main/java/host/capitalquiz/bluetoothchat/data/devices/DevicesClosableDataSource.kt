@@ -1,6 +1,6 @@
 package host.capitalquiz.bluetoothchat.data.devices
 
-import host.capitalquiz.bluetoothchat.domain.Device
+import host.capitalquiz.bluetoothchat.domain.devices.Device
 import host.capitalquiz.common.data.Closable
 import kotlinx.coroutines.flow.StateFlow
 

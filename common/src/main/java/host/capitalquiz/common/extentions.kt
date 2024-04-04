@@ -32,3 +32,12 @@ fun <T : Any> SingleEventEffect(
         }
     }
 }
+
+inline fun <reified T: Throwable> catchException(block: () -> Unit) {
+    try {
+        block.invoke()
+    } catch (e : Throwable) {
+        if (e !is T) throw e
+    }
+}
+

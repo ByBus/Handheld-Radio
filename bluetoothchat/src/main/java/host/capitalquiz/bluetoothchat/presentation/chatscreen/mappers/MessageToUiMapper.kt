@@ -1,6 +1,6 @@
 package host.capitalquiz.bluetoothchat.presentation.chatscreen.mappers
 
-import host.capitalquiz.bluetoothchat.domain.MessageMapper
+import host.capitalquiz.bluetoothchat.domain.chat.MessageMapper
 import host.capitalquiz.bluetoothchat.presentation.chatscreen.CurrentTimeProvider
 import host.capitalquiz.bluetoothchat.presentation.chatscreen.MessageUi
 import java.text.SimpleDateFormat

@@ -8,7 +8,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import host.capitalquiz.bluetoothchat.data.toDevice
-import host.capitalquiz.bluetoothchat.domain.Device
+import host.capitalquiz.bluetoothchat.domain.devices.Device
 import host.capitalquiz.common.getExtra
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

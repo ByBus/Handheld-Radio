@@ -1,4 +1,4 @@
-package host.capitalquiz.wifiradioset.data
+package host.capitalquiz.wifiradioset.data.devices
 
 import host.capitalquiz.wifiradioset.domain.RadioSetRepository
 import host.capitalquiz.wifiradioset.domain.WifiDevice

@@ -2,7 +2,7 @@ package host.capitalquiz.bluetoothchat.data.devices
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothManager
-import host.capitalquiz.bluetoothchat.domain.Device
+import host.capitalquiz.bluetoothchat.domain.devices.Device
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

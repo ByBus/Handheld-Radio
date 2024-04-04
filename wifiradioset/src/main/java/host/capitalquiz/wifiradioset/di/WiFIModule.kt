@@ -16,12 +16,11 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 import dagger.hilt.android.scopes.ViewModelScoped
 import host.capitalquiz.common.di.DispatcherIO
 import host.capitalquiz.wifiradioset.R
-import host.capitalquiz.wifiradioset.data.ConnectionManager
-import host.capitalquiz.wifiradioset.data.LocationState
-import host.capitalquiz.wifiradioset.data.NetworkChecker
-import host.capitalquiz.wifiradioset.data.StateDataSource
-import host.capitalquiz.wifiradioset.data.WifiConnectionManager
-import host.capitalquiz.wifiradioset.data.WifiRadioSetRepository
+import host.capitalquiz.wifiradioset.data.devices.ConnectionManager
+import host.capitalquiz.wifiradioset.data.devices.LocationState
+import host.capitalquiz.wifiradioset.data.devices.StateDataSource
+import host.capitalquiz.wifiradioset.data.devices.WifiConnectionManager
+import host.capitalquiz.wifiradioset.data.devices.WifiRadioSetRepository
 import host.capitalquiz.wifiradioset.data.communication.AudioPlayer
 import host.capitalquiz.wifiradioset.data.communication.AudioSessionFrequenciesProvider
 import host.capitalquiz.wifiradioset.data.communication.RadioSetModeFactory
@@ -43,9 +42,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 @Module
 @InstallIn(ViewModelComponent::class)
 interface WiFIModule {
-
-    @Binds
-    fun bindWiFIConnectionChecker(impl: NetworkChecker.WiFiChecker): NetworkChecker
 
     @Binds
     fun bindWifiRadioSetRepository(impl: WifiRadioSetRepository): RadioSetRepository

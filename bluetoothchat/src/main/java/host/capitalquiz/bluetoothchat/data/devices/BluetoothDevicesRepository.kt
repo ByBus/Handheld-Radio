@@ -2,7 +2,7 @@ package host.capitalquiz.bluetoothchat.data.devices
 
 import host.capitalquiz.bluetoothchat.di.PairedDevices
 import host.capitalquiz.bluetoothchat.di.ScannedDevices
-import host.capitalquiz.bluetoothchat.domain.DevicesRepository
+import host.capitalquiz.bluetoothchat.domain.devices.DevicesRepository
 import javax.inject.Inject
 
 class BluetoothDevicesRepository @Inject constructor(

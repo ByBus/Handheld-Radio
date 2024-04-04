@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import host.capitalquiz.bluetoothchat.domain.Communication
 import host.capitalquiz.bluetoothchat.domain.ConnectionResult
-import host.capitalquiz.bluetoothchat.domain.DeviceMapper
-import host.capitalquiz.bluetoothchat.domain.DevicesRepository
+import host.capitalquiz.bluetoothchat.domain.devices.DeviceMapper
+import host.capitalquiz.bluetoothchat.domain.devices.DevicesRepository
 import host.capitalquiz.bluetoothchat.domain.SingletonFactory
-import host.capitalquiz.bluetoothchat.domain.mapItems
+import host.capitalquiz.bluetoothchat.domain.devices.mapItems
 import host.capitalquiz.bluetoothchat.presentation.ConnectionResultUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

@@ -15,10 +15,10 @@ interface ConnectionModeFactory {
         @DispatcherIO
         private val dispatcher: CoroutineDispatcher,
     ) : ConnectionModeFactory {
-        override fun createServer(): Server = BluetoothServer(bluetoothManager, dispatcher)
+        override fun createServer(): Server = Server.BluetoothServer(bluetoothManager, dispatcher)
 
         override fun createClient(): Client =
-            BluetoothClient(bluetoothManager, connectionWatcher, dispatcher)
+            Client.BluetoothClient(bluetoothManager, connectionWatcher, dispatcher)
 
     }
 }

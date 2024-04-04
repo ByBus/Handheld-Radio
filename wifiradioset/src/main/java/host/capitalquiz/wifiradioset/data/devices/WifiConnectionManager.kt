@@ -1,4 +1,4 @@
-package host.capitalquiz.wifiradioset.data
+package host.capitalquiz.wifiradioset.data.devices
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -12,7 +12,6 @@ import android.net.wifi.p2p.WifiP2pGroup
 import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.WifiP2pManager.ActionListener
 import android.os.Looper
-import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import host.capitalquiz.common.getExtra
 import host.capitalquiz.wifiradioset.domain.CommunicationMode
@@ -75,13 +74,13 @@ class WifiConnectionManager @Inject constructor(
             }
 
             WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION -> {
-                val device = intent.getExtra<WifiP2pDevice>(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE)
-                device?.let {
-                    Log.d(
-                        "WifiConnectionManager",
-                        "onReceive: WIFI_P2P_THIS_DEVICE_CHANGED_ACTION ${it.toWifiDevice()}"
-                    )
-                }
+//                val device = intent.getExtra<WifiP2pDevice>(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE)
+//                device?.let {
+//                    Log.d(
+//                        "WifiConnectionManager",
+//                        "onReceive: WIFI_P2P_THIS_DEVICE_CHANGED_ACTION ${it.toWifiDevice()}"
+//                    )
+//                }
             }
         }
     }

@@ -1,4 +1,4 @@
-package host.capitalquiz.bluetoothchat.domain
+package host.capitalquiz.bluetoothchat.domain.chat
 
 data class Message(
     val id: Long = -1,

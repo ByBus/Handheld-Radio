@@ -1,4 +1,4 @@
-package host.capitalquiz.bluetoothchat.domain
+package host.capitalquiz.bluetoothchat.domain.devices
 
 import kotlinx.coroutines.flow.StateFlow
 

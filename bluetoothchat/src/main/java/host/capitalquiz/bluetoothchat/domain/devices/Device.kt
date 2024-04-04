@@ -1,4 +1,4 @@
-package host.capitalquiz.bluetoothchat.domain
+package host.capitalquiz.bluetoothchat.domain.devices
 
 
 data class Device(val deviceName: String?, val mac: String) {

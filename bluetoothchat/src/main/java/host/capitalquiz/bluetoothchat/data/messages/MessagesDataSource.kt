@@ -1,7 +1,7 @@
 package host.capitalquiz.bluetoothchat.data.messages
 
-import host.capitalquiz.bluetoothchat.domain.Chat
-import host.capitalquiz.bluetoothchat.domain.Message
+import host.capitalquiz.bluetoothchat.domain.chat.Chat
+import host.capitalquiz.bluetoothchat.domain.chat.Message
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

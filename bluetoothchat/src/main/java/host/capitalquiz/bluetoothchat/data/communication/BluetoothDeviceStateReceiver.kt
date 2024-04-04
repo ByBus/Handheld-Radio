@@ -9,7 +9,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import host.capitalquiz.bluetoothchat.domain.ConnectionResult
-import host.capitalquiz.bluetoothchat.domain.Device
+import host.capitalquiz.bluetoothchat.domain.devices.Device
 import host.capitalquiz.common.getExtra
 import javax.inject.Inject
 

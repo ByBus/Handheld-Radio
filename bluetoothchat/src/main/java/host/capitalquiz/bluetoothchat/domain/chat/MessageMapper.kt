@@ -1,4 +1,4 @@
-package host.capitalquiz.bluetoothchat.domain
+package host.capitalquiz.bluetoothchat.domain.chat
 
 fun interface MessageMapper<R> {
     operator fun invoke(

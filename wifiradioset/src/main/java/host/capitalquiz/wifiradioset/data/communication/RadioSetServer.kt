@@ -12,6 +12,7 @@ import java.io.IOException
 import java.net.ServerSocket
 import java.net.Socket
 import javax.inject.Inject
+import host.capitalquiz.common.catchException
 
 interface RadioSetServer : RadioSetSocketHolder {
 
@@ -40,19 +41,17 @@ interface RadioSetServer : RadioSetSocketHolder {
         }.flowOn(dispatcher)
 
         private fun closeServerSocket() {
-            try {
+            catchException<IOException> {
                 serverSocket.close()
-            } catch (_: IOException) {
             }
         }
 
 
         override fun close() {
             closeServerSocket()
-            try {
+            catchException<IOException> {
                 socket?.close()
                 socket = null
-            } catch (_: IOException) {
             }
         }
 
